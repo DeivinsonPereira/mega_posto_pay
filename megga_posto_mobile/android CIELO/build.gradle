@@ -1,0 +1,37 @@
+buildscript {
+    ext.kotlin_version = '1.8.22'
+    ext.order_manager_version = '1.8.2'
+    repositories {
+        google() 
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+    
+}
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+        mavenLocal()
+      
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+    configurations {compile.exclude group: 'com.google.zxing'}
+}
+
