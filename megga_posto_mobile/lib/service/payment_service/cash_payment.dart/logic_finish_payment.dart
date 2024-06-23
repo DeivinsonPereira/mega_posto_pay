@@ -107,7 +107,6 @@ class LogicFinishPayment {
   Future<void> _handlePaymentExceedingRemainingValue() async {
     _paymentFeatures.addSelectedPayment(ModalidadePaymment.DINHEIRO);
     //TODO adicionar o pagamento à lista de pagamentos
-    //Posso criar um model para armazenar o troco e os pagamentos
     //Executar a venda
     QuantityBack.back(2);
   }

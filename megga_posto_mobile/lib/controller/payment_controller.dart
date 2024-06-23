@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_final_fields
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:megga_posto_mobile/model/collections/payment_form.dart';
@@ -10,6 +12,7 @@ class PaymentController extends GetxController {
 
   List<PaymentForm> paymentForms = [];
   List<String> paymentFormsDocto = [];
+  late Uint8List assignaturePng;
 
   RxList<PaymentExecuted> listPaymentsSelected = <PaymentExecuted>[].obs;
 

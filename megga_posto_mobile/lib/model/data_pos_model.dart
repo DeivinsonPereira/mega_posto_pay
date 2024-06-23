@@ -19,6 +19,7 @@ class DataPos {
   int? idContaSuprimento;
   int? idContaSalario;
   int? caixaId;
+  String? repicateCaixaId;
   String? razaoSocial;
   String? nomeFantasia;
   String? cnpj;
@@ -50,6 +51,7 @@ class DataPos {
     this.idContaSuprimento,
     this.idContaSalario,
     this.caixaId,
+    this.repicateCaixaId,
     this.razaoSocial,
     this.nomeFantasia,
     this.cnpj,
@@ -82,6 +84,7 @@ class DataPos {
       'idContaSuprimento': idContaSuprimento,
       'idContaSalario': idContaSalario,
       'caixaId': caixaId,
+      'replicateCaixaId': repicateCaixaId,
       'razaoSocial': razaoSocial,
       'nomeFantasia': nomeFantasia,
       'cnpj': cnpj,
@@ -129,6 +132,9 @@ class DataPos {
       idContaSalario:
           map['IDCONTA_SALARIO'] != null ? map['IDCONTA_SALARIO'] as int : null,
       caixaId: map['CAIXA_ID'] != null ? map['CAIXA_ID'] as int : null,
+      repicateCaixaId: map['REPLICATE_CAIXA_ID'] != null
+          ? map['REPLICATE_CAIXA_ID'] as String
+          : null,
       razaoSocial:
           map['RAZAO_SOCIAL'] != null ? map['RAZAO_SOCIAL'] as String : null,
       nomeFantasia:

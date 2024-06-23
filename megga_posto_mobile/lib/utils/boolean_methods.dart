@@ -6,4 +6,12 @@ class BooleanMethods {
   bool isCartShoppingEmpty() {
     return _billController.cartShopping.isEmpty;
   }
+
+  bool isSupplyPumpEmpty() {
+    return _billController.cartShopping.where((element) => element.supplyPump != null).isEmpty;
+  }
+
+  bool isProductEmpty() {
+    return _billController.cartShopping.where((element) => element.productAndQuantity != null).isEmpty;
+  }
 }

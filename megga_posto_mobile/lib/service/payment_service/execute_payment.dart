@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:megga_posto_mobile/integracao/padrao/paypadrao_enums.dart';
 import 'package:megga_posto_mobile/integracao/padrao/paypadrao_formapgto_model.dart';
 import 'package:megga_posto_mobile/page/loading/loading_page.dart';
+import 'package:megga_posto_mobile/page/payment/components/page/signatures/signature_page.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
@@ -66,7 +67,7 @@ class ExecutePayment {
     }
 
     if (_choosePayment.isNota(paymentDoctoForm)) {
-      //Logica aqui
+      Get.to(() => const SignaturePage());
     }
   }
 

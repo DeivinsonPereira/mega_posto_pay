@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:megga_posto_mobile/model/collections/dado_empresa.dart';
 import 'package:megga_posto_mobile/model/collections/data_pix.dart';
+import 'package:megga_posto_mobile/service/device_info/get_info_device.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'model/collections/payment_form.dart';
@@ -31,15 +32,14 @@ void main() async {
   final _configFeatures = ConfigFeatures.instance;
   _configFeatures.updateIpServidor();
 
-  // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+  await GetInfoDevice.instance.getSerialNumber();
+
+/*
   _configFeatures
       .setSerialDevice('sdsdsdsdscr34343'); //androidInfo.serialNumber
-
+*/
   // TODO fazer Sangria
   // TODO fazer suprimento
-  // TODO colocar carrinho mesmo que sem produto nenhum escolhido.
-  // TODO ao retornar nao zera o carrinho, ele deve permanecer.
   // TODO modoficar a tela de pagamentos
   // TODO funcionalidade do touch para assinatura
   // TODO Realizar venda

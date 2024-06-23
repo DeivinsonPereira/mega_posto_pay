@@ -25,7 +25,7 @@ class ConfigPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final _configController = Dependencies.configController();
     final _configFeatures = ConfigFeatures.instance;
-    final double heightButton = 40;
+    const double heightButton = 40;
     final double widthButton = Get.size.width * 0.43;
 
     // Constrói o botão de voltar

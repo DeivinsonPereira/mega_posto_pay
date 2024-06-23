@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:megga_posto_mobile/model/payment_cartao_model.dart';
@@ -53,20 +55,14 @@ class PaymentFeatures implements IPaymentFeatures {
   void addSelectedPayment(String paymentFormDocto,
       {PaymentCartaoModel? dadosCartao, PaymentPixModel? dadosPix}) {
     if (_paymentController.enteredValue.value > 0.0) {
-      PaymentForm paymentForm = _paymentController.paymentForms.firstWhere(
-          (element) => element.tipoDocto == paymentFormDocto,
-          orElse: () => PaymentForm());
-
       PaymentExecuted paymentSelected = PaymentExecuted(
-        formaPagamentoId: paymentForm.codigo ?? -1,
-        tipoDocto: paymentFormDocto, //paymentForm.tipoDocto ?? '',
+        tipoDocto: paymentFormDocto,
         dataVencimento: DatetimeFormatter.formatDate(DateTime.now()),
         numParcela: 1,
         valorParcela: 0,
         valorIntegral: _paymentController.enteredValue.value,
         dadosCartao: dadosCartao,
         dadosPix: dadosPix,
-        //TODO Ajustar aqui (verificar os campos)
       );
       _paymentController.valuePayment.value +=
           _paymentController.enteredValue.value;
@@ -113,6 +109,11 @@ class PaymentFeatures implements IPaymentFeatures {
       _paymentController.update();
     }
   }
+
+  void setSignature(Uint8List assignaturePng) =>
+      _paymentController.assignaturePng = assignaturePng;
+
+  void removeSignature() => _paymentController.assignaturePng = Uint8List(0);
 
   @override
   //Adiciona o valor na variável enteredValue
@@ -182,7 +183,7 @@ class PaymentFeatures implements IPaymentFeatures {
   }
 
   void replaceIsAutoFillToFalse() {
-    if(_paymentController.isAutoFilled){
+    if (_paymentController.isAutoFilled) {
       _paymentController.isAutoFilled = false;
       _paymentController.enteredValue.value = 0.0;
       _paymentController.update();

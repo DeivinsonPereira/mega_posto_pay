@@ -5,7 +5,7 @@ import 'package:megga_posto_mobile/model/payment_pix_model.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first, non_constant_identifier_names
 class PaymentFormSelected {
-  int forma_pagamento_id;
+ // int forma_pagamento_id;
   String tipoDocto;
   int num_parcela;
   String data_vencimento;
@@ -14,7 +14,7 @@ class PaymentFormSelected {
   PaymentPixModel dadosPix;
 
   PaymentFormSelected({
-    required this.forma_pagamento_id,
+  //  required this.forma_pagamento_id,
     required this.tipoDocto,
     required this.num_parcela,
     required this.data_vencimento,
@@ -38,7 +38,7 @@ class PaymentFormSelected {
 
   factory PaymentFormSelected.fromMap(Map<String, dynamic> map) {
     return PaymentFormSelected(
-      forma_pagamento_id: map['forma_pagamento_id'] as int,
+   //   forma_pagamento_id: map['forma_pagamento_id'] as int,
       tipoDocto: map['tipo_docto'] as String,
       num_parcela: map['num_parcela'] as int,
       data_vencimento: map['data_vencimento'] as String,

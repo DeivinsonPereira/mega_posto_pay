@@ -286,6 +286,15 @@ public class MainActivity extends FlutterActivity {
                                 e.printStackTrace();
                             }
                             break;
+                        case "getSerialNumber":
+                            String serialNumber = android.os.Build.SERIAL;
+                            if (serialNumber != null) {
+                                result.success(serialNumber);
+                            } else {
+                                result.error("UNAVAILABLE", "Serial number not available.", null);
+                            }
+                        break;
+                            
                     }
                 });
     }
