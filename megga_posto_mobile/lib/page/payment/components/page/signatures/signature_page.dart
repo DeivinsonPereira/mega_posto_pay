@@ -4,7 +4,6 @@ import 'package:megga_posto_mobile/common/custom_back_button.dart';
 import 'package:megga_posto_mobile/common/custom_continue_button.dart';
 import 'package:megga_posto_mobile/common/custom_header_dialog.dart';
 import 'package:megga_posto_mobile/page/payment/components/page/signatures/logic/confirm_button_signature.dart';
-import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
 import 'package:signature/signature.dart';
 
 class SignaturePage extends StatelessWidget {
@@ -12,7 +11,6 @@ class SignaturePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _paymentFeatures = PaymentFeatures();
     final _logicButtons = LogicButtonSignature.instance;
     final SignatureController _signatureController = SignatureController(
       penStrokeWidth: 4,

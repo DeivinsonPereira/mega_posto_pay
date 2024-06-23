@@ -32,12 +32,11 @@ void main() async {
   final _configFeatures = ConfigFeatures.instance;
   _configFeatures.updateIpServidor();
 
-  await GetInfoDevice.instance.getSerialNumber();
+//  await GetInfoDevice.instance.getSerialNumber(); TODO já está funcionando, só descomentar quando estiver cadastrado na api
 
-/*
   _configFeatures
       .setSerialDevice('sdsdsdsdscr34343'); //androidInfo.serialNumber
-*/
+
   // TODO fazer Sangria
   // TODO fazer suprimento
   // TODO modoficar a tela de pagamentos

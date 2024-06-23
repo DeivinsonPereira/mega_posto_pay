@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
@@ -15,6 +17,7 @@ import '../../model/supply_model.dart';
 import '../../model/supply_pump_model.dart';
 import '../../utils/dependencies.dart';
 import '../../utils/auth.dart';
+import 'package:http/http.dart' as http;
 
 class ExecuteSell implements IExecuteSell {
   final Logger _logger = Logger();
@@ -44,22 +47,36 @@ class ExecuteSell implements IExecuteSell {
       }
 
       listPaymentsSelected = getPaymentFormSelected();
-      
+
       Sell sell = await getSell();
 
-      Uri uri = Uri.parse(Endpoints.endpointVenda());
+      var request =
+          http.MultipartRequest('POST', Uri.parse(Endpoints.endpointVenda()));
 
+      request.fields['json'] = jsonEncode(sell);
 
+      if (_paymentController.assignaturePng.isNotEmpty) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'file',
+          _paymentController.assignaturePng,
+          filename: 'assignature.png',
+          contentType: http.MultipartFile.fromBytes(
+                  'assignature.png', _paymentController.assignaturePng,
+                  filename: 'assignature.png')
+              .contentType,
+        ));
+      }
 
-      var response =
-          await _ioClient.post(uri, headers: Auth.header, body: sell.toJson());
+      var streamedResponse = await _ioClient.send(request);
 
       if (kDebugMode) print(sell.toJson());
-      if (kDebugMode) print(response.body);
+      if (kDebugMode) print(streamedResponse.stream);
 
-      if (response.statusCode == 200) {
+      if (streamedResponse.statusCode == 200) {
+        var responseBytes = await streamedResponse.stream.toBytes();
+        var responseBody = utf8.decode(responseBytes);
         RetornoFechamentoModel retorno =
-            RetornoFechamentoModel.fromJson(response.body);
+            RetornoFechamentoModel.fromJson(responseBody);
 
         if (retorno.success) {
           count = 1;
@@ -71,7 +88,7 @@ class ExecuteSell implements IExecuteSell {
         }
       } else {
         _logger.e(
-            'Erro ao executar a venda dados. ${response.headers['x-status'] ?? ''}');
+            'Erro ao executar a venda dados. Status code: ${streamedResponse.statusCode}');
         count = 1;
         return '';
       }
@@ -96,7 +113,8 @@ class ExecuteSell implements IExecuteSell {
       data_hora_venda: DateTime.now().toIso8601String(),
       caixa_id: _configController.dataPos.caixaId ?? 0,
       atendente_id: _configController.idUsuario.value,
-      replicate_caixa_id: _configController.dataPos.repicateCaixaId ?? '0',
+      replicate_caixa_id:
+          _configController.dataPos.dadosCaixa?[0].replicateCaixaId ?? '0',
       itens: items,
       parcelas: listPaymentsSelected,
     );

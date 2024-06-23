@@ -5,8 +5,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/io_client.dart';
 import 'package:logger/logger.dart';
+import 'package:megga_posto_mobile/common/custom_cherry.dart';
 
 import '../../model/data_pos_model.dart';
 import '../../utils/auth.dart';
@@ -70,8 +72,9 @@ class GetDataPos {
     _configFeatures.setDataPos(DataPos.fromMap(data['data']));
   }
 
-  Future<void> _handleError(String message) {
+  Future<void> _handleError(String message) async {
     _logger.e('Erro ao buscar credenciais. $message');
-    return Future.error(message);
+    CustomCherryError(message: message).show(Get.context!);
+    return;
   }
 }

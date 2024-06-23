@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:megga_posto_mobile/model/credential_tef_model.dart';
+import 'package:megga_posto_mobile/model/dados_caixa_model.dart';
 
 import 'credential_pix_model.dart';
 
@@ -19,7 +20,6 @@ class DataPos {
   int? idContaSuprimento;
   int? idContaSalario;
   int? caixaId;
-  String? repicateCaixaId;
   String? razaoSocial;
   String? nomeFantasia;
   String? cnpj;
@@ -33,7 +33,7 @@ class DataPos {
   String? telefone;
   String? nomeDoMunicipio;
   String? fed_uf;
-
+  List<DadosCaixaModel>? dadosCaixa;
   List<CredentialPix>? credenciaisPix;
   List<CredentialTef>? credenciaisTef;
 
@@ -51,7 +51,6 @@ class DataPos {
     this.idContaSuprimento,
     this.idContaSalario,
     this.caixaId,
-    this.repicateCaixaId,
     this.razaoSocial,
     this.nomeFantasia,
     this.cnpj,
@@ -65,6 +64,7 @@ class DataPos {
     this.telefone,
     this.nomeDoMunicipio,
     this.fed_uf,
+    this.dadosCaixa,
     this.credenciaisPix,
     this.credenciaisTef,
   });
@@ -84,7 +84,6 @@ class DataPos {
       'idContaSuprimento': idContaSuprimento,
       'idContaSalario': idContaSalario,
       'caixaId': caixaId,
-      'replicateCaixaId': repicateCaixaId,
       'razaoSocial': razaoSocial,
       'nomeFantasia': nomeFantasia,
       'cnpj': cnpj,
@@ -98,6 +97,7 @@ class DataPos {
       'telefone': telefone,
       'nomeDoMunicipio': nomeDoMunicipio,
       'fed_uf': fed_uf,
+      'dadosCaixa': dadosCaixa?.map((x) => x.toMap()).toList(),
       'credenciaisPix': credenciaisPix?.map((x) => x.toMap()).toList(),
       'credenciaisTef': credenciaisTef?.map((x) => x.toMap()).toList(),
     };
@@ -132,9 +132,6 @@ class DataPos {
       idContaSalario:
           map['IDCONTA_SALARIO'] != null ? map['IDCONTA_SALARIO'] as int : null,
       caixaId: map['CAIXA_ID'] != null ? map['CAIXA_ID'] as int : null,
-      repicateCaixaId: map['REPLICATE_CAIXA_ID'] != null
-          ? map['REPLICATE_CAIXA_ID'] as String
-          : null,
       razaoSocial:
           map['RAZAO_SOCIAL'] != null ? map['RAZAO_SOCIAL'] as String : null,
       nomeFantasia:
@@ -155,6 +152,13 @@ class DataPos {
           ? map['NOMEDOMUNICIPIO'] as String
           : null,
       fed_uf: map['FED_UF'] != null ? map['FED_UF'] as String : null,
+      dadosCaixa: map['dados_caixa'] != null
+          ? List<DadosCaixaModel>.from(
+              (map['dados_caixa'] as List<dynamic>).map<DadosCaixaModel?>(
+                (x) => DadosCaixaModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
       credenciaisPix: map['credenciais_pix'] != null
           ? List<CredentialPix>.from(
               (map['credenciais_pix'] as List<dynamic>).map<CredentialPix?>(

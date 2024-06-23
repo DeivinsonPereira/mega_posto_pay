@@ -30,6 +30,7 @@ class GetSupplyPump {
       var bodyRequest = {
         "pidbico": idSupplyPump,
         "pidatendente": configController.idUsuario.value,
+        
       };
 
       var response = await ioClient.post(
