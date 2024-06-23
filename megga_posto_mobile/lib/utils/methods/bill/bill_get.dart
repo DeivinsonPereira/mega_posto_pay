@@ -1,12 +1,11 @@
+import 'package:megga_posto_mobile/controller/bill_controller.dart';
 import 'package:megga_posto_mobile/model/collections/product.dart';
+import 'package:megga_posto_mobile/model/supply_pump_model.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
-import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
 import '../../../model/cart_shopping_model.dart';
-import '../../../model/product_and_quantity_model.dart';
-import '../../interface/i_bill_get.dart';
 
-class BillGet implements IBillGet {
+class BillGet {
   final _billController = Dependencies.billController();
 
   BillGet._privateConstructor();
@@ -16,65 +15,97 @@ class BillGet implements IBillGet {
   factory BillGet() => _instance;
 
   // Retorna a quantidade de todos os produtos do carrinho
-  @override
   int calculateTotalQuantityFromCart() {
-    List<ProductAndQuantityModel>? productList =
-        _billController.cartShopping.value.productAndQuantity;
-    int quantity = 0;
+    int totalQuantityFromCart = 0;
+    List<CartShoppingModel> cartShopping = _billController.cartShopping
+        .where((element) => element.productAndQuantity != null)
+        .toList();
 
-    if (productList == null) return quantity;
-
-    for (var item in productList) {
-      quantity += item.quantity!;
+    if (cartShopping.isNotEmpty) {
+      for (var item in cartShopping) {
+        totalQuantityFromCart += item.productAndQuantity!.quantity!;
+      }
     }
-    return quantity;
+
+    cartShopping = _billController.cartShopping
+        .where((element) => element.supplyPump != null)
+        .toList();
+
+    if (cartShopping.isEmpty) return totalQuantityFromCart;
+
+    totalQuantityFromCart += cartShopping.length;
+
+    return totalQuantityFromCart;
   }
 
   // retorna a quantidade de cada produto
-  @override
   int getProductQuantityFromCart(Product product) {
-    List<ProductAndQuantityModel>? productList =
-        _billController.cartShopping.value.productAndQuantity;
-    if (productList == null) return 0;
+    CartShoppingModel? cartShopping = _billController.cartShopping
+        .where((element) =>
+            element.productAndQuantity?.product?.codigo == product.codigo)
+        .firstOrNull;
 
-    ProductAndQuantityModel productFiltered = productList.firstWhere(
-        (element) => element.product!.codigo == product.codigo,
-        orElse: () => ProductAndQuantityModel(quantity: 0));
+    if (cartShopping == null) return 0;
 
-    if (productFiltered.product == null) return 0;
-
-    return productFiltered.quantity!;
+    return cartShopping.productAndQuantity!.quantity!;
   }
 
   // retorna o valor total do carrinho
-  @override
   double getTotalValueFromCart() {
     double totalValue = 0.0;
-    CartShoppingModel cartShopping = _billController.cartShopping.value;
 
-    if (cartShopping.supplyPump != null) {
-      totalValue += cartShopping.supplyPump!.total!;
-    }
+    if (_billController.cartShopping.isEmpty) return totalValue;
 
-    if (cartShopping.productAndQuantity == null) return totalValue;
+    for (var item in _billController.cartShopping) {
+      if (item.productAndQuantity != null) {
+        totalValue += item.productAndQuantity!.product!.valor! *
+            item.productAndQuantity!.quantity!;
+      }
 
-    for (var item in cartShopping.productAndQuantity!) {
-      totalValue += item.product!.valor! * item.quantity!;
+      if (item.supplyPump == null) continue;
+
+      totalValue += item.supplyPump!.total ?? 0.0;
     }
     return totalValue;
   }
 
-  ProductAndQuantityModel getProductFromCart(Product product) {
-    if (SingletonsInstances().booleanMethods.isProductEmpty()) {
-      return ProductAndQuantityModel();
+  CartShoppingModel? getCartByProduct(Product product) {
+    return _billController.cartShopping
+        .where(
+          (element) =>
+              element.productAndQuantity?.product?.codigo == product.codigo,
+        )
+        .firstOrNull;
+  }
+
+  CartShoppingModel? getCartBySupplyPump(SupplyPump supplyPump, {BillController? billController}) {
+    if(billController != null) {
+       return billController.cartShopping
+        .where((element) => element.supplyPump?.id == supplyPump.id)
+        .firstOrNull;
     }
 
-    return _billController.cartShopping.value.productAndQuantity!.firstWhere(
-        (element) => element.product?.codigo == product.codigo,
-        orElse: () => ProductAndQuantityModel());
+    return _billController.cartShopping
+        .where((element) => element.supplyPump?.id == supplyPump.id)
+        .firstOrNull;
+  }
+
+  int getQuantityProductInCart() {
+    int quantity = 0;
+
+    if (_billController.cartShopping.isEmpty) return quantity;
+
+    for (var item in _billController.cartShopping) {
+      if (item.productAndQuantity != null) {
+        quantity += 1;
+      }
+    }
+    return quantity;
   }
 
   double getTotalToPay() {
     return getTotalValueFromCart() + 0.0 - 0.0;
   }
+
+  
 }

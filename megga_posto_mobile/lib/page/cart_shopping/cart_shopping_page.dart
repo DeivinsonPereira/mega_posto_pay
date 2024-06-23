@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:megga_posto_mobile/common/container_total/custom_container_total.dart';
 import 'package:megga_posto_mobile/common/custom_continue_button.dart';
 import 'package:megga_posto_mobile/common/custom_header_app_bar.dart';
-import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
+import 'package:megga_posto_mobile/controller/bill_controller.dart';
+import 'package:megga_posto_mobile/model/cart_shopping_model.dart';
+import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/static/custom_colors.dart';
 import 'package:megga_posto_mobile/page/cart_shopping/components/build_line_legend.dart';
 import 'package:megga_posto_mobile/page/payment/payment_page.dart';
@@ -19,7 +21,27 @@ class CartShoppingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _paymentFeatures = PaymentFeatures();
+    Dependencies.billController();
+
+    Widget _buildListView() {
+      return GetBuilder<BillController>(
+        builder: (_) {
+          return ListView.builder(
+            itemCount: _.cartShopping.length,
+            itemBuilder: (context, index) {
+              CartShoppingModel cartShoppingSelected = _.cartShopping[index];
+              if (cartShoppingSelected.supplyPump != null) {
+                return BuildLineSupply(
+                    supplyPumpSelected: cartShoppingSelected.supplyPump!);
+              }
+
+              return BuildLineProducts(
+                  productAndQuantity: cartShoppingSelected.productAndQuantity!);
+            },
+          );
+        },
+      );
+    }
 
     // Constrói os botões de continuar e voltar
     Widget _buildButtons() {
@@ -28,7 +50,6 @@ class CartShoppingPage extends StatelessWidget {
           Expanded(
             child: CustomBackButton(
               function: () {
-                _paymentFeatures.clearAll();
                 Get.back();
               },
               text: 'Voltar',
@@ -54,9 +75,7 @@ class CartShoppingPage extends StatelessWidget {
         child: Column(children: [
           CustomHeaderAppBar(),
           const BuildLineLegend(),
-          const BuildLineSupply(),
-          const SizedBox(height: 3.0),
-          const Expanded(child: BuildLineProducts()),
+          Expanded(child: _buildListView()),
           const CustomContainerTotal(),
           _buildButtons(),
         ]),

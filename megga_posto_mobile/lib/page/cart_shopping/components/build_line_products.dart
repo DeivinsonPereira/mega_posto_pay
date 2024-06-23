@@ -1,25 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:megga_posto_mobile/model/product_and_quantity_model.dart';
+import 'package:megga_posto_mobile/utils/methods/bill/bill_features.dart';
+import 'package:megga_posto_mobile/utils/static/custom_colors.dart';
 
 import '../../../common/custom_text_style.dart';
-import '../../../utils/dependencies.dart';
 import '../../../utils/format_numbers.dart';
 import '../../../utils/format_string.dart';
 
 class BuildLineProducts extends StatelessWidget {
-  const BuildLineProducts({super.key});
+  final ProductAndQuantityModel productAndQuantity;
+  const BuildLineProducts({
+    Key? key,
+    required this.productAndQuantity,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var billController = Dependencies.billController();
+    final _billFeatures = BillFeatures();
+    const double sizeButton = 25;
 
     // Constrói o nome do produto no carrinho
     Widget _buildNameProduct(ProductAndQuantityModel productAndQuanity) {
       return SizedBox(
-        width: Get.size.width * 0.45,
+        width: Get.size.width * 0.4,
         child: Text(
           FormatString.maxLengthText(productAndQuanity.product!.descricao!, 17),
           style: CustomTextStyles.whiteStyle(16),
@@ -29,16 +37,60 @@ class BuildLineProducts extends StatelessWidget {
       );
     }
 
+    Widget _buildIcons(Color color, IconData icon, Function() function) {
+      return InkWell(
+        onTap: function,
+        child: Container(
+          width: sizeButton,
+          height: sizeButton,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            color: color,
+          ),
+          child: Icon(
+            icon,
+            color: Colors.white,
+          ),
+        ),
+      );
+    }
+
+    Widget _buildButtonAddProduct() {
+      return _buildIcons(
+          CustomColors.confirmButton,
+          Icons.add,
+          () => _billFeatures.addCartShoppingListFromSupply(
+              product: productAndQuantity.product));
+    }
+
+    Widget _buildTextQuantity() {
+      return Text(
+        productAndQuantity.quantity.toString(),
+        style: CustomTextStyles.whiteStyle(16),
+      );
+    }
+
+    Widget _buildButtonRemoveProduct() {
+      return _buildIcons(
+          const Color.fromARGB(255, 122, 31, 24),
+          Icons.remove,
+          () => _billFeatures.removeItemCartShoppingList(
+              product: productAndQuantity.product, isCartShopping: true));
+    }
+
     // Constrói a quantidade do produto no carrinho
     Widget _buildQuantityProduct(ProductAndQuantityModel productAndQuanity) {
       return SizedBox(
-        width: Get.size.width * 0.17,
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            productAndQuanity.quantity.toString(),
-            style: CustomTextStyles.whiteStyle(16),
-          ),
+        width: Get.size.width * 0.26,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _buildButtonAddProduct(),
+            const SizedBox(width: 5),
+            _buildTextQuantity(),
+            const SizedBox(width: 5),
+            _buildButtonRemoveProduct(),
+          ],
         ),
       );
     }
@@ -46,7 +98,7 @@ class BuildLineProducts extends StatelessWidget {
     // Constrói o valor total do produto no carrinho
     Widget _buildTotalProduct(ProductAndQuantityModel productAndQuanity) {
       return SizedBox(
-        width: Get.size.width * 0.32,
+        width: Get.size.width * 0.28,
         child: Align(
           alignment: Alignment.centerRight,
           child: Text(
@@ -57,39 +109,22 @@ class BuildLineProducts extends StatelessWidget {
       );
     }
 
-    // Constrói as linhas dos itens
-    Widget _buildLinesProducts(ProductAndQuantityModel productAndQuanity) {
-      return SizedBox(
-        height: Get.size.height * 0.05,
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0),
-              child: Row(
-                children: [
-                  _buildNameProduct(productAndQuanity),
-                  _buildQuantityProduct(productAndQuanity),
-                  _buildTotalProduct(productAndQuanity),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // Constrói os itens do carrinho
     return SizedBox(
-      height: Get.size.height * 0.5,
-      child: ListView.builder(
-          itemCount:
-              billController.cartShopping.value.productAndQuantity!.length,
-          itemBuilder: (context, index) {
-            ProductAndQuantityModel? productAndQuanity =
-                billController.cartShopping.value.productAndQuantity![index];
-
-            return _buildLinesProducts(productAndQuanity);
-          }),
+      height: Get.size.height * 0.05,
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0),
+            child: Row(
+              children: [
+                _buildNameProduct(productAndQuantity),
+                _buildQuantityProduct(productAndQuantity),
+                _buildTotalProduct(productAndQuantity),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

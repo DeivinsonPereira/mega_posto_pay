@@ -16,7 +16,7 @@ import '../../model/supply_pump_model.dart';
 import '../../utils/dependencies.dart';
 import '../../utils/auth.dart';
 
-class ExecuteSell implements IExecuteSell {
+class ExecuteSell /*implements IExecuteSell*/{
   final Logger _logger = Logger();
   final _billController = Dependencies.billController();
   final _paymentController = Dependencies.paymentController();
@@ -26,54 +26,54 @@ class ExecuteSell implements IExecuteSell {
   final _booleanMethods = SingletonsInstances().booleanMethods;
   double totalNota = 0.0;
   double totalProduct = 0.0;
-  List<SellItem?> items = [];
+  List<SellItem> items = [];
   List<PaymentFormSelected> listPaymentsSelected = [];
 
   @override
   Future<String> executeSell({Supply? supply, SupplyPump? supplyPump}) async {
     try {
-      _addTotalNotaAndTotalProduct();
+    //  _addTotalNotaAndTotalProduct();
 
-      if (!_booleanMethods.isSupplyPumpEmpty()) {
-        items.add(getSupplyItem());
-      }
-      if (!_booleanMethods.isProductEmpty()) {
-        items.addAll(getProductItem());
-      }
+    //  if (!_booleanMethods.isSupplyPumpEmpty()) {
+    //    items.addAll(getSupplyItem());
+    //  }
+    //  if (!_booleanMethods.isProductEmpty()) {
+    //    items.addAll(getProductItem());
+    //  }
 
       listPaymentsSelected = getPaymentFormSelected();
 
-      Sell sell = await getSell();
+    //  Sell sell = await getSell();
 
       Uri uri = Uri.parse(Endpoints.endpointVenda());
 
-      var response =
-          await _ioClient.post(uri, headers: Auth.header, body: sell.toJson());
+   //   var response =
+    //      await _ioClient.post(uri, headers: Auth.header, body: sell.toJson());
 
-      if (kDebugMode) print(sell.toJson());
-      if (kDebugMode) print(response.body);
+   //   if (kDebugMode) print(sell.toJson());
+  //    if (kDebugMode) print(response.body);
 
-      if (response.statusCode == 200) {
-        RetornoFechamentoModel retorno =
-            RetornoFechamentoModel.fromJson(response.body);
+  //    if (response.statusCode == 200) {
+   //     RetornoFechamentoModel retorno =
+   //         RetornoFechamentoModel.fromJson(response.body);
 
-        if (retorno.success) {
-          return retorno.data;
-        } else {
-          _logger.e('Erro ao executar a venda. ${retorno.message}');
-          return '';
-        }
-      } else {
-        _logger.e(
-            'Erro ao executar a venda dados. ${response.headers['x-status'] ?? ''}');
+    //    if (retorno.success) {
+   //       return retorno.data;
+   //     } else {
+  //        _logger.e('Erro ao executar a venda. ${retorno.message}');
+  //        return '';
+   //     }
+  ////    } else {
+   //     _logger.e(
+   //         'Erro ao executar a venda dados. ${response.headers['x-status'] ?? ''}');
         return '';
-      }
+   //   }
     } catch (e) {
       _logger.e('Erro ao executar a venda. $e');
       return '';
     }
   }
-
+/*
   @override
   // Monta o objeto Sell
   Future<Sell> getSell() async {
@@ -94,45 +94,49 @@ class ExecuteSell implements IExecuteSell {
     );
     return sell;
   }
-
+*/
+/*
   @override
   // Monta o objeto SupplyItem
-  SellItem? getSupplyItem() {
-    var supplySelected = _billController.supplyPumpSelected;
-    var item;
-
+  List<SellItem> getSupplyItem() {
+    
+    List<SellItem> itens = [];
     // TODO VERIFICAR... ta indo tudo null
-    if (_booleanMethods.isSupplyPumpEmpty()) return item;
-    item = SellItem(
-      produto_id: _billController.cartShopping.value.supplyPump!.produto_id,
+    if (_booleanMethods.isSupplyPumpEmpty()) return [];
+
+    for(var item in _billController.cartShopping.value.supplyPump){
+
+    itens.add(SellItem(
+      produto_id: item.produto_id,
       sequencia: 1,
-      quantidade: supplySelected.quantidade,
-      total_liquido: supplySelected.total, // desconto
-      tanque_id: supplySelected.tanque_id,
-      bico_id: supplySelected.bicoId,
-      abastecimento_id: supplySelected.id,
+      quantidade: item.quantidade,
+      total_liquido: item.total, // desconto
+      tanque_id: item.tanque_id,
+      bico_id: item.bicoId,
+      abastecimento_id: item.id,
       encerrante_final:
-          supplySelected.encerrante_final, // verificar o que é isso
-      preco_liquido: supplySelected.total, // desconto
+          item.encerrante_final, // verificar o que é isso
+      preco_liquido: item.total, // desconto
       valor_desconto: 0, // Colocar depois,
       valor_acrescimo: 0, // verificar
-      encerrante_inicial: supplySelected.encerrante_inicial, // verificar
-      preco_bruto: supplySelected.unitario, // colocar valor combustivel bruto
-      total_bruto: supplySelected.total, // colocar valor dos produtos bruto
-    );
+      encerrante_inicial: item.encerrante_inicial, // verificar
+      preco_bruto: item.unitario, // colocar valor combustivel bruto
+      total_bruto: item.total, // colocar valor dos produtos bruto
+    ));
+    }
 
-    if (item == null) return null;
-    return item;
+    return itens;
   }
-
+*/
+/*
   @override
   // Monta o objeto SellItem
-  List<SellItem?> getProductItem() {
+  List<SellItem> getProductItem() {
     List<SellItem> items = [];
     int count = 2;
     if (BooleanMethods().isProductEmpty()) return items;
 
-    for (var item in _billController.cartShopping.value.productAndQuantity!) {
+    for (var item in _billController.cartShopping.value.productAndQuantity) {
       items.add(SellItem(
         produto_id: item.product!.codigo,
         sequencia: count,
@@ -158,7 +162,7 @@ class ExecuteSell implements IExecuteSell {
 
     return items;
   }
-
+*/
   @override
   List<PaymentFormSelected> getPaymentFormSelected() {
     List<PaymentFormSelected> list = [];
@@ -175,22 +179,24 @@ class ExecuteSell implements IExecuteSell {
     }
     return list;
   }
-
+/*
   // Adiciona o total das notas e produtos
   void _addTotalNotaAndTotalProduct() {
     if (_booleanMethods.isProductEmpty()) return;
 
-    for (var item in _billController.cartShopping.value.productAndQuantity!) {
+    for (var item in _billController.cartShopping.value.productAndQuantity) {
       totalNota += item.quantity! * item.product!.valor!; // - desconto
       totalProduct += item.quantity! * item.product!.valor!;
     }
 
     if (_booleanMethods.isSupplyPumpEmpty()) return;
-    totalNota +=
-        _billController.cartShopping.value.supplyPump!.total!; // - desconto
-    totalProduct += _billController.cartShopping.value.supplyPump!.total!;
-  }
 
+    for (var item in _billController.cartShopping.value.supplyPump) {
+      totalNota += item.total!;
+      totalProduct += item.total!;
+    }
+  }
+*/
   String _convertToIso8601(String dateStr) {
     DateFormat originalFormat = DateFormat('dd/MM/yyyy');
     DateTime dateTime = originalFormat.parse(dateStr);

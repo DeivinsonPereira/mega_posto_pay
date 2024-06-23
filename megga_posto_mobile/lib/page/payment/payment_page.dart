@@ -2,15 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:megga_posto_mobile/common/custom_continue_button.dart';
 import 'package:megga_posto_mobile/common/custom_header_app_bar.dart';
 import 'package:megga_posto_mobile/common/custom_text_style.dart';
-import 'package:megga_posto_mobile/utils/dependencies.dart';
+import 'package:megga_posto_mobile/page/payment/components/dialogs/dialog_choose_payment.dart';
 import 'package:megga_posto_mobile/utils/format_numbers.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_get.dart';
 
 import '../../common/custom_back_button.dart';
 import '../../common/container_total/custom_container_total.dart';
-import 'components/custom_card_payment_form.dart';
 import 'logic/logic_back_buttom.dart';
 
 class PaymentPage extends StatelessWidget {
@@ -18,7 +18,6 @@ class PaymentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _paymentController = Dependencies.paymentController();
     var _paymentGet = PaymentGet();
 
     // Constrói o título da página
@@ -36,35 +35,29 @@ class PaymentPage extends StatelessWidget {
           ));
     }
 
-    // Constrói os Cards de pagamento
-    Widget _buildPaymentCards() {
-      return GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 0,
-            crossAxisSpacing: 0,
-            childAspectRatio: 1.9,
-          ),
-          itemCount: _paymentController.paymentFormsDocto.length,
-          itemBuilder: (context, index) {
-            String paymentFormSelected =
-                _paymentController.paymentFormsDocto[index];
-            return CustomCardPaymentForm(
-              paymentFormSelected: paymentFormSelected,
-              index: index,
-            );
-          });
+    Widget _buildBackButton() {
+      return CustomBackButton(
+        function: () => LogicBackButtom().backButtom(),
+        text: 'Voltar',
+      );
+    }
+
+    Widget _buildContinueButton() {
+      return CustomContinueButton(
+          text: 'Pagar',
+          function: () => Get.dialog(
+              barrierDismissible: false, const DialogChoosePayment()));
     }
 
     // constrói o corpo dos botões de voltar e continuar
     Widget _buildBackAndContinueButtonBody() {
       return Row(children: [
         Expanded(
-          child: CustomBackButton(
-            function: () => LogicBackButtom().backButtom(),
-            text: 'Voltar',
-          ),
+          child: _buildBackButton(),
         ),
+        Expanded(
+          child: _buildContinueButton(),
+        )
       ]);
     }
 
@@ -76,7 +69,7 @@ class PaymentPage extends StatelessWidget {
             CustomHeaderAppBar(isPayment: true),
             _buildTitle(),
             _buildRemainingValue(),
-            Expanded(child: _buildPaymentCards()),
+            const Expanded(child: SizedBox()),
             const CustomContainerTotal(),
             _buildBackAndContinueButtonBody(),
           ],

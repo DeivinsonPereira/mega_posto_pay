@@ -57,12 +57,8 @@ class ProductsPage extends StatelessWidget {
         ),
         child: IconButton(
           onPressed: () {
-            if (_billController.isProduct) {
-              _billFeatures.addCartShoppingListFromProduct(productSelected);
-            } else {
-              _billFeatures.addCartShoppingListFromSupply(false,
-                  product: productSelected);
-            }
+            _billFeatures.addCartShoppingListFromSupply(
+                product: productSelected);
           },
           icon: const Icon(Icons.add, color: Colors.white, size: 20),
         ),
@@ -90,7 +86,8 @@ class ProductsPage extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: () {
-              _billFeatures.removeItemCartShoppingList(productSelected);
+              _billFeatures.removeItemCartShoppingList(
+                  product: productSelected);
             },
             icon: const Icon(
               Icons.remove,
@@ -208,8 +205,7 @@ class ProductsPage extends StatelessWidget {
         canPop: true,
         onPopInvoked: (didPop) {
           if (!isProductFromMenu!) {
-            _billFeatures.clearCartShoppingList();
-            _billFeatures.clearSupplyPumpSelected();
+            //_billFeatures.clearCartShoppingList();
             return;
           }
         },

@@ -16,7 +16,6 @@ class SupplyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Dependencies.supplyController();
-
     Widget _buildBody() {
       return GetBuilder<SupplyController>(builder: (_) {
         return GridView.builder(

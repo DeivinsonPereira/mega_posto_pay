@@ -1,25 +1,25 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers
-
 import 'package:flutter/material.dart';
+import 'package:megga_posto_mobile/common/custom_header_app_bar.dart';
+import 'package:megga_posto_mobile/common/custom_text_assignature.dart';
+import 'package:megga_posto_mobile/page/management/static/list_icons_management.dart';
 import 'package:megga_posto_mobile/utils/static/custom_colors.dart';
-import 'package:megga_posto_mobile/page/home/static/custom_grid_view.dart';
 
-import '../../common/custom_header_app_bar.dart';
-import '../../common/custom_text_assignature.dart';
-import 'components/custom_card_home_page.dart';
+import '../home/components/custom_card_home_page.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class ManagementPage extends StatelessWidget {
+  const ManagementPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _listIconsManagement = ListIconsManagement.instance;
+
     // Constrói os Cards
     Widget _buildCard(int index) {
       return CustomCardHomePage(
-        color: CustomGridView.colorsGridView[index],
-        icon: CustomGridView.iconsGridView[index],
-        title: CustomGridView.titlesGridView[index],
-        function: CustomGridView.functionsGridView[index],
+        color: _listIconsManagement.listToCard[index].color,
+        icon: _listIconsManagement.listToCard[index].icon,
+        title: _listIconsManagement.listToCard[index].title,
+        function: _listIconsManagement.listToCard[index].function,
       );
     }
 
@@ -30,10 +30,10 @@ class HomePage extends StatelessWidget {
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
+            crossAxisSpacing: 5,
+            mainAxisSpacing: 5,
           ),
-          itemCount: CustomGridView.colorsGridView.length,
+          itemCount: _listIconsManagement.listToCard.length,
           itemBuilder: (context, index) {
             return _buildCard(index);
           },
@@ -45,12 +45,16 @@ class HomePage extends StatelessWidget {
       return const CustomTextAssignature();
     }
 
+    Widget _buildHeader() {
+      return CustomHeaderAppBar();
+    }
+
     // Constrói a página
     return Scaffold(
       backgroundColor: CustomColors.backgroundColor,
       body: Column(
         children: [
-          CustomHeaderAppBar(),
+          _buildHeader(),
           Expanded(
             child: _buildBody(),
           ),

@@ -10,9 +10,8 @@ class LogicProductConfirmButton {
   var billController = Dependencies.billController();
 
   void executeLogic(BuildContext context) {
-    if (BooleanMethods().isProductEmpty()) {
-      const CustomCherryError(message: 'Nenhum item selecionado!')
-          .show(context);
+    if (BooleanMethods().isCartShoppingEmpty()) {
+      const CustomCherryError(message: 'O carrinho está vazio!').show(context);
     } else {
       Get.to(() => const CartShoppingPage());
     }

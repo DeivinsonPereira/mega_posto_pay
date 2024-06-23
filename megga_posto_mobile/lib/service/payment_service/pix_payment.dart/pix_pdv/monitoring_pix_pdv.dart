@@ -7,7 +7,6 @@ import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/page/payment/enum/modalidade_payment.dart';
 import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pix_pdv/isolate_pix_pdv_manager.dart';
 import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pix_pdv/logic/response_conditions.dart';
-import 'package:megga_posto_mobile/service/payment_service/utils/condition_to_back.dart';
 import 'package:megga_posto_mobile/utils/method_quantity_back.dart';
 import 'package:megga_posto_mobile/utils/methods/bill/bill_features.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
@@ -100,7 +99,7 @@ class MonitoringPixPdv {
   void _handleApproved(BuildContext context) {
     final paymentFeatures = PaymentFeatures();
 
-    paymentFeatures.addSelectedPayment( ModalidadePaymment.PIX);
+    paymentFeatures.addSelectedPayment(ModalidadePaymment.PIX);
     const CustomCherrySuccess(message: 'Pagamento efetuado com sucesso!')
         .show(context);
     _quantityBack();
@@ -113,13 +112,7 @@ class MonitoringPixPdv {
     await InsertDataPix().insert(_paymentGet.getEnteredValue(), _qrdinamico);
     if (_paymentGet.getRemainingValueRestanding() == 0 ||
         _paymentGet.getRemainingValueRestanding() < 0) {
-      if (ConditionToBack().condition()) {
-        QuantityBack.back(6);
-        _executeFinally();
-        return;
-      }
-
-      QuantityBack.back(5);
+      QuantityBack.back(6);
       _executeFinally();
       return;
     }

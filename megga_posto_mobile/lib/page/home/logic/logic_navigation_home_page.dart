@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:megga_posto_mobile/page/management/management_page.dart';
 import 'package:megga_posto_mobile/utils/methods/supply/supply_features.dart';
 
 import '../../../model/supply_model.dart';
@@ -13,7 +14,8 @@ class LogicNavigationHomePage {
 
   LogicNavigationHomePage._privateConstructor();
 
-  static final LogicNavigationHomePage _instance = LogicNavigationHomePage._privateConstructor();
+  static final LogicNavigationHomePage _instance =
+      LogicNavigationHomePage._privateConstructor();
 
   factory LogicNavigationHomePage() => _instance;
 
@@ -33,4 +35,7 @@ class LogicNavigationHomePage {
     Get.to(() => ProductsPage(), transition: Transition.rightToLeft);
   }
 
+  void navigationToManagement() {
+    Get.to(() => const ManagementPage(), transition: Transition.rightToLeft);
+  }
 }

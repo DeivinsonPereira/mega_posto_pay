@@ -6,7 +6,7 @@ import 'package:megga_posto_mobile/page/loading/loading_page.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
-import '../../page/payment/components/dialog_confirm_payment/dialog_confirm_payment.dart';
+import '../../page/payment/components/dialogs/dialog_confirm_payment.dart';
 import 'pix_payment.dart/pix_pdv/pix_pdv.dart';
 
 class ExecutePayment {

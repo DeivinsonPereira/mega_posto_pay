@@ -26,7 +26,9 @@ class LoginPasswordRepository implements IExecuteLogin {
 
   @override
   Future<void> login(BuildContext context, {String? cardId}) async {
-    if (!_isValidCredentials()) return _showError(context, '');
+    if (!_isValidCredentials()) {
+      return _showError(context, 'Login ou senha inválidos', '');
+    }
 
     Uri uri = Uri.parse(Endpoints.postLogin());
 
@@ -45,13 +47,14 @@ class LoginPasswordRepository implements IExecuteLogin {
           var idUser = data['data']['ID'];
           _handleSuccessfulLogin(context, idUser);
         } else {
-          _showError(context, data['message']);
+          _showError(context, data['message'], data['message']);
         }
       } else {
-        _showError(context, 'Erro: ${response.statusCode}');
+        _showError(
+            context, 'Falha ao conectar', 'Erro: ${response.statusCode}');
       }
     } catch (e) {
-      _showError(context, e.toString());
+      _showError(context, 'Falha na conexão com o servidor!', e.toString());
     }
   }
 
@@ -75,12 +78,11 @@ class LoginPasswordRepository implements IExecuteLogin {
   }
 
   // Mostra mensagem de erro em caso de erro
-  void _showError(BuildContext context, String message) {
-    _logger.e('Login ou senha inválidos. Tente novamente! $message');
+  void _showError(
+      BuildContext context, String message, String messageResponse) {
+    _logger.e('Erro: $messageResponse');
     Get.back();
-    const CustomCherryError(
-            message: 'Login ou senha inválidos. Tente novamente! ')
-        .show(context);
+    CustomCherryError(message: message).show(context);
   }
 
   // Verifica se os campos de login e senha foram preenchidos

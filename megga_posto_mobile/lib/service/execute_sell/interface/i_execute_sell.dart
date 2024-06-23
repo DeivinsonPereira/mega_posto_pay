@@ -8,7 +8,7 @@ import '../../../model/supply_pump_model.dart';
 abstract class IExecuteSell {
   Future<void> executeSell({Supply? supply, SupplyPump? supplyPump});
   Future<Sell> getSell();
-  SellItem? getSupplyItem();
-  List<SellItem?> getProductItem();
+  List<SellItem> getSupplyItem();
+  List<SellItem> getProductItem();
   List<PaymentFormSelected> getPaymentFormSelected();
 }

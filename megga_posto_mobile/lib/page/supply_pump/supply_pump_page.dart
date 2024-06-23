@@ -2,6 +2,12 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:megga_posto_mobile/common/custom_back_button.dart';
+import 'package:megga_posto_mobile/common/custom_continue_button.dart';
+import 'package:megga_posto_mobile/controller/bill_controller.dart';
+import 'package:megga_posto_mobile/page/supply_pump/logic/logic_navigation_next_page.dart';
+
 
 import '../../common/custom_header_app_bar.dart';
 import '../../utils/static/custom_colors.dart';
@@ -18,19 +24,46 @@ class SupplyPumpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _billController = Dependencies.billController();
     var supplyController = Dependencies.supplyController();
 
     // Constrói a listview e chama os cards
     Widget _buildListView() {
-      return ListView.builder(
-          itemCount: supplyController.supplySelectedPumpList.length,
-          itemBuilder: (context, index) {
-            var supplyPumpSelected = supplyController.supplySelectedPumpList[index];
-            return CustomCardSupplyPump(
-                supplyPumpSelected: supplyPumpSelected,
-                index: index,
-                supplySelected: supplySelected);
-          });
+      return GetBuilder<BillController>(
+        builder: (_) {
+          return ListView.builder(
+              itemCount: supplyController.supplySelectedPumpList.length,
+              itemBuilder: (context, index) {
+                var supplyPumpSelected =
+                    supplyController.supplySelectedPumpList[index];
+                return CustomCardSupplyPump(
+                    supplyPumpSelected: supplyPumpSelected,
+                    index: index,
+                    supplySelected: supplySelected,
+                    controller: _billController);
+              });
+        },
+      );
+    }
+
+    Widget _buildButtonBack() {
+      return CustomBackButton(text: 'Voltar', function: () => Get.back());
+    }
+
+    Widget _buildButtonContinue() {
+      return CustomContinueButton(
+          text: 'Continuar',
+          function: () => LogicNavigationNextPage()
+              .nextPage(_billController.supplySelected));
+    }
+
+    Widget _buildLineButtons() {
+      return Row(
+        children: [
+          Expanded(child: _buildButtonBack()),
+          Expanded(child: _buildButtonContinue()),
+        ],
+      );
     }
 
     // Constrói o corpo da page
@@ -42,6 +75,7 @@ class SupplyPumpPage extends StatelessWidget {
             bicoId: supplySelected.bicoId,
           ),
           Expanded(child: _buildListView()),
+          _buildLineButtons(),
         ],
       );
     }

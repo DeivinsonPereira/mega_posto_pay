@@ -36,18 +36,18 @@ class CustomContainerTotal extends StatelessWidget {
     Widget _buildValueTotal(PaymentController _) {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0),
-        child: Text(
-          FormatNumbers.formatNumbertoString(
-            _billGet.getTotalToPay(),
-          ),
-          style: CustomTextStyles.blackBoldStyle(24),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        child: Obx(() => Text(
+              FormatNumbers.formatNumbertoString(
+                _billGet.getTotalToPay(),
+              ),
+              style: CustomTextStyles.blackBoldStyle(24),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )),
       );
     }
 
-    Widget _buildInformations(double width, String text, double value) {
+    Widget _buildInformations(double width, String text, Widget textValue) {
       return SizedBox(
         width: width,
         height: Get.size.height * 0.05,
@@ -58,10 +58,7 @@ class CustomContainerTotal extends StatelessWidget {
               text,
               style: CustomTextStyles.blackStyle(12),
             ),
-            Text(
-              FormatNumbers.formatNumbertoString(value),
-              style: CustomTextStyles.blackStyle(12),
-            ),
+            textValue,
           ],
         ),
       );
@@ -69,20 +66,34 @@ class CustomContainerTotal extends StatelessWidget {
 
     Widget _buildSubtotal() {
       return _buildInformations(
-          widthTotal * 0.3, 'Subtotal', _billGet.getTotalValueFromCart());
+          widthTotal * 0.3,
+          'Subtotal',
+          Obx(() => Text(
+                FormatNumbers.formatNumbertoString(
+                    _billGet.getTotalValueFromCart()),
+                style: CustomTextStyles.blackStyle(12),
+              )));
     }
 
     Widget _buildDiscount() {
       return Expanded(
           child: _buildInformations(
-        widthTotal * 0.25,
-        'Desconto',
-        0,
-      ));
+              widthTotal * 0.25,
+              'Desconto',
+              Text(
+                FormatNumbers.formatNumbertoString(0),
+                style: CustomTextStyles.blackStyle(12),
+              )));
     }
 
     Widget _buildExtra() {
-      return _buildInformations(widthTotal * 0.3, 'Acréscimo', 0);
+      return _buildInformations(
+          widthTotal * 0.3,
+          'Acréscimo',
+          Text(
+            FormatNumbers.formatNumbertoString(0),
+            style: CustomTextStyles.blackStyle(12),
+          ));
     }
 
     // Constrói a linha de conteúdo

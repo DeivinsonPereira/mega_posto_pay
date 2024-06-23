@@ -6,7 +6,6 @@ import 'package:megga_posto_mobile/model/payment_pix_model.dart';
 import 'package:megga_posto_mobile/page/loading/loading_page.dart';
 import 'package:megga_posto_mobile/page/payment/enum/modalidade_payment.dart';
 import 'package:megga_posto_mobile/service/execute_sell/execute_sell.dart';
-import 'package:megga_posto_mobile/service/payment_service/utils/condition_to_back.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/method_quantity_back.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
@@ -52,20 +51,15 @@ class LogicFinishPayment {
 
     confirmaImpressao((isImprimir) async {
       if (isImprimir) {
-         _printController.sendPrinterDFePDF(xml);
+        _printController.sendPrinterDFePDF(xml);
       }
       //  await PrintXml().printXml(xml); TODO descomentar essa linha
       const CustomCherrySuccess(message: 'Pagamento efetuado com sucesso!')
           .show(Get.context!);
-      if (ConditionToBack().condition()) {
         QuantityBack.back(6);
         _billFeatures.clearAll();
         _paymentFeatures.clearAll();
         return;
-      }
-      QuantityBack.back(5);
-      _billFeatures.clearAll();
-      _paymentFeatures.clearAll();
     });
   }
 

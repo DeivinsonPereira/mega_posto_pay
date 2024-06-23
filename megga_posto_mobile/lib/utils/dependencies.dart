@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:megga_posto_mobile/controller/bill_controller.dart';
 import 'package:megga_posto_mobile/controller/config_controller.dart';
+import 'package:megga_posto_mobile/controller/management_controller.dart';
 import 'package:megga_posto_mobile/controller/payment_controller.dart';
 import 'package:megga_posto_mobile/controller/supply_controller.dart';
 import 'package:megga_posto_mobile/controller/text_field_controller.dart';
@@ -100,6 +101,14 @@ abstract class Dependencies {
       return Get.find<PayPadraoController>();
     } else {
       return Get.put(PayPadraoController(), permanent: true);
+    }
+  }
+
+  static ManagementController managementController() {
+    if (Get.isRegistered<ManagementController>()) {
+      return Get.find<ManagementController>();
+    } else {
+      return Get.put(ManagementController(), permanent: true);
     }
   }
 }

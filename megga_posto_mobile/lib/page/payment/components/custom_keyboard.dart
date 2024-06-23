@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:megga_posto_mobile/common/custom_text_style.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
 
-
 class CustomKeyboard extends StatelessWidget {
   final String paymentFormDocto;
   const CustomKeyboard({
@@ -27,6 +26,7 @@ class CustomKeyboard extends StatelessWidget {
           Expanded(
             child: InkWell(
               onTap: () {
+                _paymentFeatures.replaceIsAutoFillToFalse();
                 _paymentFeatures.addNumberToEnteredValue(
                     number[i], paymentFormDocto);
               },
@@ -58,6 +58,7 @@ class CustomKeyboard extends StatelessWidget {
           Expanded(
             child: InkWell(
               onTap: () {
+                _paymentFeatures.replaceIsAutoFillToFalse();
                 if (i == 0) {
                   _paymentFeatures.addNumberToEnteredValue(
                       '0', paymentFormDocto);

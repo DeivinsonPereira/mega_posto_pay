@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:megga_posto_mobile/common/custom_text_style.dart';
 import 'package:megga_posto_mobile/page/products/products_page.dart';
 import 'package:megga_posto_mobile/utils/format_numbers.dart';
-import 'package:megga_posto_mobile/utils/methods/bill/bill_features.dart';
 import 'package:megga_posto_mobile/utils/methods/bill/bill_get.dart';
 
 import '../page/fidelity/fidelity_dialog.dart';
@@ -27,7 +26,6 @@ class CustomHeaderAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _billFeatures = BillFeatures();
     final _billGet = BillGet();
 
     // Constrói o container que mostra a quantidade de produtos no carrinho
@@ -41,7 +39,7 @@ class CustomHeaderAppBar extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            '${_billGet.calculateTotalQuantityFromCart()}',
+            '${_billGet.getQuantityProductInCart()}',
             style: CustomTextStyles.whiteBoldStyle(12),
           ),
         ),
@@ -65,7 +63,6 @@ class CustomHeaderAppBar extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              _billFeatures.removeSupplyPumpCartShoppingList();
               Get.to(() => ProductsPage(
                     isProductFromMenu: true,
                   ));
@@ -78,7 +75,7 @@ class CustomHeaderAppBar extends StatelessWidget {
           Obx(() => Positioned(
                 right: 0,
                 top: 0,
-                child: _billGet.calculateTotalQuantityFromCart() == 0
+                child: _billGet.getQuantityProductInCart() == 0
                     ? const SizedBox()
                     : _buildContainerQuantity(),
               ))

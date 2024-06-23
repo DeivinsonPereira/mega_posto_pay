@@ -59,7 +59,7 @@ class PaymentFeatures implements IPaymentFeatures {
 
       PaymentExecuted paymentSelected = PaymentExecuted(
         formaPagamentoId: paymentForm.codigo ?? -1,
-        tipoDocto: paymentFormDocto ,//paymentForm.tipoDocto ?? '',
+        tipoDocto: paymentFormDocto, //paymentForm.tipoDocto ?? '',
         dataVencimento: DatetimeFormatter.formatDate(DateTime.now()),
         numParcela: 1,
         valorParcela: 0,
@@ -179,5 +179,17 @@ class PaymentFeatures implements IPaymentFeatures {
       }
     }
     _paymentController.paymentFormsDocto.sort();
+  }
+
+  void replaceIsAutoFillToFalse() {
+    if(_paymentController.isAutoFilled){
+      _paymentController.isAutoFilled = false;
+      _paymentController.enteredValue.value = 0.0;
+      _paymentController.update();
+    }
+  }
+
+  void replaceIsAutoFillToTrue() {
+    _paymentController.isAutoFilled = true;
   }
 }

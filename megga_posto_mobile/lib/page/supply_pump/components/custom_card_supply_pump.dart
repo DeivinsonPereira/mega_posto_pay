@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+
 import 'package:megga_posto_mobile/common/custom_text_style.dart';
+import 'package:megga_posto_mobile/controller/bill_controller.dart';
 import 'package:megga_posto_mobile/model/supply_pump_model.dart';
 import 'package:megga_posto_mobile/utils/date_time_formatter.dart';
 import 'package:megga_posto_mobile/utils/format_numbers.dart';
-import 'package:megga_posto_mobile/utils/methods/bill/bill_features.dart';
+import 'package:megga_posto_mobile/utils/methods/bill/bill_get.dart';
 
 import '../../../model/supply_model.dart';
 import '../logic/logic_navigation_next_page.dart';
@@ -15,25 +17,43 @@ class CustomCardSupplyPump extends StatelessWidget {
   final SupplyPump supplyPumpSelected;
   final Supply supplySelected;
   final int index;
+  final BillController controller;
   const CustomCardSupplyPump({
     Key? key,
     required this.supplyPumpSelected,
     required this.supplySelected,
     required this.index,
+    required this.controller,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final _billFeatures = BillFeatures();
+    final _billGet = BillGet();
+
+    Widget _buildTextValue() {
+      return Text(
+        'R\$ ${FormatNumbers.formatNumbertoString(supplyPumpSelected.total)}',
+        style: CustomTextStyles.blackBoldStyle(20),
+      );
+    }
+
+    Widget _buildCheckIcon() {
+      return _billGet.getCartBySupplyPump(supplyPumpSelected,
+                  billController: controller) ==
+              null
+          ? const SizedBox.shrink()
+          : const Icon(Icons.check_circle_outline_outlined,
+              color: Colors.green, size: 30);
+    }
 
     // Constrói o valor do card
-    Widget _buildValue() {
-      return Align(
-        alignment: Alignment.topLeft,
-        child: Text(
-          'R\$ ${FormatNumbers.formatNumbertoString(supplyPumpSelected.total)}',
-          style: CustomTextStyles.blackBoldStyle(20),
-        ),
+    Widget _buildLineValue() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildTextValue(),
+          _buildCheckIcon(),
+        ],
       );
     }
 
@@ -77,7 +97,7 @@ class CustomCardSupplyPump extends StatelessWidget {
     // Constrói o corpo da page
     Widget _buildBody() {
       return Column(children: [
-        _buildValue(),
+        _buildLineValue(),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _buildHour(),
           SizedBox(
@@ -89,35 +109,25 @@ class CustomCardSupplyPump extends StatelessWidget {
     }
 
     // retorna o card
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (didPop) {
-        if (didPop) {
-          _billFeatures.clearCartShoppingList();
-          _billFeatures.clearSupplyPumpSelected();
-          return;
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: InkWell(
-          onTap: () async {
-            await LogicNavigationNextPage()
-                .nextPage(supplySelected, supplyPumpSelected);
-          },
-          child: Material(
-            elevation: 5,
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: _buildBody(),
-                )),
-          ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: () async {
+          await LogicNavigationNextPage()
+              .nextPage(supplySelected, supplyPumpSelected: supplyPumpSelected);
+        },
+        child: Material(
+          elevation: 5,
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: _buildBody(),
+              )),
         ),
       ),
     );

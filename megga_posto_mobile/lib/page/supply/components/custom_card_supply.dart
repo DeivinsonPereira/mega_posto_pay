@@ -6,7 +6,6 @@ import 'package:megga_posto_mobile/utils/format_string.dart';
 
 import '../../../utils/static/custom_colors.dart';
 import '../../../model/supply_model.dart';
-import '../../../utils/dependencies.dart';
 import '../logic/logic_navigation_supply_pump.dart';
 
 class CustomCardSupply extends StatelessWidget {
@@ -21,7 +20,6 @@ class CustomCardSupply extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var supplyController = Dependencies.supplyController();
 
     // Constrói o Ícone do card
     Widget _buildIcon() {

@@ -88,9 +88,9 @@ class PaymentPixPdv {
       PixPDVTokenModel token = PixPDVTokenModel(
         enviroment: PixPDVEnviroment
             .homologacao, // aqui devo mudar para o de produção quando for para produção
-        userName: credentials.clientId,
-        password: credentials.token,
-        secretKey: credentials.apiKey,
+        userName: credentials.clientId ?? '',
+        password: credentials.token ?? '',
+        secretKey: credentials.apiKey ?? '',
       );
 
       PixPdvSdk pixPdvSdk = PixPdvSdk(
