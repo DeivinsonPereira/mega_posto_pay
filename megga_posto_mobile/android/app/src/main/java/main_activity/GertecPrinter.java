@@ -49,7 +49,7 @@ public class GertecPrinter {
     private GEDI_PRNTR_e_Status status;
 
     // Classe de configuração da impressão
-    private ConfigPrint configPrint;
+    private com.example.megga_posto_mobile.ConfigPrint configPrint;
     private Typeface typeface;
 
     /**
@@ -124,7 +124,7 @@ public class GertecPrinter {
      * @param config = Classe {@link ConfigPrint} que contém toda a configuração
      *               para a impressão
      */
-    public void setConfigImpressao(ConfigPrint config) {
+    public void setConfigImpressao(com.example.megga_posto_mobile.ConfigPrint config) {
 
         this.configPrint = config;
 
@@ -406,41 +406,25 @@ public class GertecPrinter {
      *
      */
     public boolean imprimeImagem(String imagem) throws GediException {
-
         int id = 0;
-        // int largulaFixa = 430;
         int largulaFixa = 363;
-        // Bitmap bmp;
-        try {
 
+        try {
             byte[] decodeString = Base64.decode(imagem, Base64.DEFAULT);
             Bitmap bmp = BitmapFactory.decodeByteArray(decodeString, 0, decodeString.length);
 
-            
+            if (bmp == null) {
+                throw new IllegalArgumentException("Falha ao decodificar a imagem Base64.");
+            }
+
             Double alturaBitmap = (double) bmp.getHeight();   // 730
             Double larguraBitmap = (double) bmp.getWidth();   // 280
-            Double taxa = largulaFixa / larguraBitmap;        //  430 / 280
+            Double taxa = largulaFixa / larguraBitmap;        //  363 / 280
 
             pictureConfig = new GEDI_PRNTR_st_PictureConfig();
-
-            // Align
             pictureConfig.alignment = GEDI_PRNTR_e_Alignment.valueOf(configPrint.getAlinhamento());
-
-            // Height
-            // pictureConfig.height = bmp.getHeight();
-            // Width
-            // pictureConfig.width = bmp.getWidth();
-            pictureConfig.height = (int) (alturaBitmap * taxa);  
+            pictureConfig.height = (int) (alturaBitmap * taxa);
             pictureConfig.width = largulaFixa;
-
-            // if (MainActivity.Model.equals(MainActivity.G700)) {
-            //     id = context.getResources().getIdentifier(imagem, "drawable", context.getPackageName());
-            //     bmp = BitmapFactory.decodeResource(context.getResources(), id);
-            // } else {
-            //     id = this.activity.getApplicationContext().getResources().getIdentifier(imagem, "drawable",
-            //             this.activity.getApplicationContext().getPackageName());
-               //  bmp = BitmapFactory.decodeResource(this.activity.getResources(), id);
-            // }
 
             ImpressoraInit();
             this.iPrint.DrawPictureExt(pictureConfig, bmp);
@@ -452,8 +436,54 @@ public class GertecPrinter {
         } catch (GediException e) {
             throw new GediException(e.getErrorCode());
         }
-
     }
+
+    public boolean imprimeImagemByPDF(byte[] imageBytes) throws GediException {
+        int largulaFixa = 363;
+
+        try {
+            if (imageBytes == null || imageBytes.length == 0) {
+                throw new IllegalArgumentException("Imagem BMP inválida ou vazia.");
+            }
+            // Decodifica a imagem BMP a partir dos bytes
+            Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+            if (bmp == null) {
+                throw new IllegalArgumentException("Falha ao decodificar a imagem BMP.");
+            }
+
+            Double alturaBitmap = (double) bmp.getHeight();
+            Double larguraBitmap = (double) bmp.getWidth();
+            Double taxa = largulaFixa / larguraBitmap;
+
+            // Configurações de impressão
+            pictureConfig = new GEDI_PRNTR_st_PictureConfig();
+            pictureConfig.alignment = GEDI_PRNTR_e_Alignment.valueOf(configPrint.getAlinhamento());
+            pictureConfig.height = (int) (alturaBitmap * taxa);
+            pictureConfig.width = largulaFixa;
+
+            // Inicializa a impressora e imprime a imagem
+            ImpressoraInit();
+            this.iPrint.DrawPictureExt(pictureConfig, bmp);
+            Log.d("imprimir", "Imagem BMP decodificada e imprimida.");
+            Log.d("bmp", bmp.toString());
+            Log.d("pictureConfig", pictureConfig.toString());
+            this.avancaLinha(40);
+            getStatusImpressora();
+            imprimeTexto("\n\n\n");
+
+
+            return true;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Falha ao decodificar a imagem BMP.", e);
+        } catch (GediException e) {
+            throw new GediException(e.getErrorCode());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
     /**
      * Método que faz a impressão de código de barras

@@ -31,7 +31,7 @@ class LoginNfcRepository implements IExecuteLogin {
       return _showError(context, 'cartão com id vazio');
     }
 
-    Uri uri = Uri.parse(Endpoints.endpointLoginNfc());
+    Uri uri = Uri.parse(Endpoints.loginNfc());
 
     try {
       final nfcCode = NfcCode(pcodigo_nfc: cardId);

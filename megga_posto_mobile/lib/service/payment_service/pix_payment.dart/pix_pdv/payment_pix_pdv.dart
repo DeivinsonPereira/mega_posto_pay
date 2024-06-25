@@ -9,7 +9,7 @@ import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
 import 'package:pixpdv_sdk/pixpdv_sdk.dart';
 
 import '../../../../model/credential_pix_model.dart';
-import '../../../../page/payment/pages/pix_pdv_payment/pix_pdv_payment_dialog.dart';
+import '../../../../page/payment/pages/pix_pdv_payment_dialog.dart';
 import '../../../../utils/singletons_instances.dart';
 
 class PaymentPixPdv {

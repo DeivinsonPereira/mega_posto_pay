@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:megga_posto_mobile/common/custom_back_button.dart';
+import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/common/custom_continue_button.dart';
 import 'package:megga_posto_mobile/common/custom_header_dialog.dart';
 import 'package:megga_posto_mobile/utils/format_numbers.dart';
@@ -39,7 +40,7 @@ class DialogValuePayment extends StatelessWidget {
     Widget _buildRemainingValue() {
       return CustomHeaderDialog(
         text: 'Restante R\$ ${FormatNumbers.formatNumbertoString(
-          _paymentGet.getRemainingValueRestanding(),
+          _paymentGet.getRemainingValue(), //TODO teste modificado de get aqui
         )}',
       );
     }
@@ -60,6 +61,11 @@ class DialogValuePayment extends StatelessWidget {
         Expanded(
           child: CustomContinueButton(
             function: () async {
+              if (_paymentController.enteredValue.value == 0) {
+                const CustomCherryError(message: 'Insira um valor maior que 0.')
+                    .show(context);
+                return;
+              }
               await ExecutePayment().executePayment(context, paymentDoctoForm);
             },
             text: 'Confirmar',

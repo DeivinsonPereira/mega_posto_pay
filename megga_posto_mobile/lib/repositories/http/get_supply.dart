@@ -16,7 +16,7 @@ import '../../utils/auth.dart';
 
 class GetSupply {
   final Logger _logger = Logger();
-  var configController = Dependencies.configController();
+  final _configController = Dependencies.configController();
 
   Future<List<Supply>> getSupply(BuildContext context) async {
     HttpClient client = HttpClient()
@@ -25,10 +25,13 @@ class GetSupply {
 
     IOClient ioClient = IOClient(client);
 
-    Uri uri = Uri.parse(Endpoints.endpointResumeSupply());
+    Uri uri = Uri.parse(Endpoints.resumeSupply());
 
     try {
-      var bodyRequest = {"pidatendente": configController.idUsuario.value};
+      var bodyRequest = {
+        "pidatendente": _configController.idUsuario.value,
+        "pcaixa_id": _configController.dataPos.dadosCaixa?[0].caixaId ?? 0
+      };
 
       var response = await ioClient.post(uri,
           body: jsonEncode(bodyRequest), headers: Auth.header);

@@ -4,14 +4,13 @@ import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/model/payment_cartao_model.dart';
 import 'package:megga_posto_mobile/model/payment_pix_model.dart';
 import 'package:megga_posto_mobile/page/loading/loading_page.dart';
-import 'package:megga_posto_mobile/page/payment/enum/modalidade_payment.dart';
 import 'package:megga_posto_mobile/service/execute_sell/execute_sell.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/method_quantity_back.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import '../../../utils/is_remaining_value.dart';
-import '../../../utils/methods/bill/bill_features.dart';
+import '../../utils/is_remaining_value.dart';
+import '../../utils/methods/bill/bill_features.dart';
 
 class LogicFinishPayment {
   final _isRemainingValue = IsRemainingValue();
@@ -24,17 +23,16 @@ class LogicFinishPayment {
       {PaymentCartaoModel? dadosCartao, PaymentPixModel? dadosPix}) async {
     _paymentFeatures.addSelectedPayment(modalidade,
         dadosCartao: dadosCartao, dadosPix: dadosPix);
-    _paymentFeatures.clearEnteredValue();
     if (_isRemainingValue.isPaymentComplete()) {
       _handlePaymentComplete();
     }
 
     if (_isRemainingValue.isPaymentIncomplete()) {
-      _handlePaymentIncomplete();
+      _handlePaymentIncomplete(modalidade);
     }
 
     if (_isRemainingValue.isPaymentExceedingRemainingValue()) {
-      _handlePaymentExceedingRemainingValue();
+      _handlePaymentExceedingRemainingValue(modalidade);
     }
   }
 
@@ -51,15 +49,17 @@ class LogicFinishPayment {
 
     confirmaImpressao((isImprimir) async {
       if (isImprimir) {
-        _printController.sendPrinterDFePDF(xml);
+        _printController
+            .sendPrinterDFePDF(xml)
+            .then((element) => _paymentFeatures.clearAll());
       }
-      //  await PrintXml().printXml(xml); TODO descomentar essa linha
+
       const CustomCherrySuccess(message: 'Pagamento efetuado com sucesso!')
           .show(Get.context!);
-        QuantityBack.back(6);
-        _billFeatures.clearAll();
-        _paymentFeatures.clearAll();
-        return;
+
+      QuantityBack.back(8);
+      _billFeatures.clearAll();
+      return;
     });
   }
 
@@ -97,24 +97,17 @@ class LogicFinishPayment {
     ).show();
   }
 
-  Future<void> _handlePaymentIncomplete() async {
-    _paymentFeatures.addSelectedPayment(ModalidadePaymment.DINHEIRO);
-    //TODO adicionar o pagamento à lista de pagamentos
+  Future<void> _handlePaymentIncomplete(String modalidade) async {
     _paymentFeatures.clearEnteredValue();
-    QuantityBack.back(2);
+    QuantityBack.back(3);
   }
 
-  Future<void> _handlePaymentExceedingRemainingValue() async {
-    _paymentFeatures.addSelectedPayment(ModalidadePaymment.DINHEIRO);
-    //TODO adicionar o pagamento à lista de pagamentos
-    //Executar a venda
-    QuantityBack.back(2);
+  Future<void> _handlePaymentExceedingRemainingValue(String modalidade) async {
+    QuantityBack.back(3);
   }
 
   void backPayment() {
     _paymentFeatures.clearEnteredValue();
-    _paymentFeatures.clearAll();
-
-    QuantityBack.back(2);
+    QuantityBack.back(3);
   }
 }

@@ -4,6 +4,9 @@ import 'package:megga_posto_mobile/integracao/padrao/paypadrao_enums.dart';
 import 'package:megga_posto_mobile/integracao/padrao/paypadrao_formapgto_model.dart';
 import 'package:megga_posto_mobile/page/loading/loading_page.dart';
 import 'package:megga_posto_mobile/page/payment/components/page/signatures/signature_page.dart';
+import 'package:megga_posto_mobile/service/payment_service/logic_finish_payment.dart';
+import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/interface/i_pix_payment.dart';
+import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pense_bank_pix/pense_bank_pix.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
@@ -73,10 +76,18 @@ class ExecutePayment {
 
   // Escolhe a forma de pagamento pix que deve ser executado
   Future<void> _paymentPix() async {
-    PixPdv? pixPdv;
+    IPixPayment? pixPdv;
 
-    int pagamento = 0; // mudar essa logica para o tipo de pix escolhido
-    if (pagamento == 0) pixPdv = PixPdv();
+    int? pagamento = _configController
+        .dataPos.credenciaisPix?[0].psp; // define o tipo de pix
+
+    if (pagamento == null || pagamento == 0) {
+      LogicFinishPayment().confirmPayment('PX');
+    }
+
+    if (pagamento == 1) pixPdv = PixPdv();
+
+    if (pagamento == 2) pixPdv = PenseBankPix();
 
     if (pixPdv == null) return;
 

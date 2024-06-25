@@ -1,9 +1,8 @@
-import 'package:megga_posto_mobile/utils/interface/i_payment_get.dart';
 import '../../../controller/payment_controller.dart';
 import '../../dependencies.dart';
 import '../bill/bill_get.dart';
 
-class PaymentGet implements IGetPaymentControllerMethods {
+class PaymentGet {
   late final PaymentController _paymentController;
   final _billGet = BillGet();
 
@@ -15,13 +14,11 @@ class PaymentGet implements IGetPaymentControllerMethods {
 
   factory PaymentGet() => _instance;
 
-  @override
   double getTotalPaid() {
     return _paymentController.listPaymentsSelected
         .fold(0.0, (first, second) => first + second.valorIntegral!);
   }
 
-  @override
   double getChange() {
     double totalValueCartShopping = _billGet.getTotalValueFromCart();
     double totalPaid = getTotalPaid();
@@ -31,27 +28,25 @@ class PaymentGet implements IGetPaymentControllerMethods {
     return change > 0 ? change : 0.0;
   }
 
-  @override
   double getDiscountValue() {
     // TODO: implement getDiscountValue
     throw UnimplementedError();
   }
 
-  @override
   double getRemainingValue() {
-    var totalValue = _billGet.getTotalValueFromCart();
-    return totalValue -
-        _paymentController.valuePayment.value -
-        _paymentController.enteredValue.value;
-  }
+    double totalValue = _billGet.getTotalValueFromCart();
 
-  @override
-  double getRemainingValueRestanding() {
-    var totalValue = _billGet.getTotalValueFromCart();
     return totalValue - _paymentController.valuePayment.value;
   }
 
   double getEnteredValue() {
     return _paymentController.enteredValue.value;
+  }
+
+  bool isPaymentNotaExists(String paymentType) {
+    return _paymentController.listPaymentsSelected
+            .where((element) => element.tipoDocto == 'NT')
+            .isNotEmpty &&
+        paymentType == 'NT';
   }
 }

@@ -17,7 +17,7 @@ class SearchProduct {
 
   // Procura os produtos na api, se encontrar chama o método para inserir no banco de dados local
   Future<void> searchProductDB(BuildContext context) async {
-    Uri uri = Uri.parse(Endpoints.endpointProducts());
+    Uri uri = Uri.parse(Endpoints.products());
 
     HttpClient client = HttpClient()
       ..badCertificateCallback =

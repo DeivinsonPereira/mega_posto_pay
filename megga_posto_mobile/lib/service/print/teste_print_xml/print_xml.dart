@@ -100,7 +100,7 @@ class PrintXml {
     text4 += 'Fonte: ${information.fonte!}\n';
     text4 += '------------------------------------------\n';
 
-    await ExecutePrint().printNfce(text1, text2, text3, qrCode, text4);
+    await ExecutePrint.instance.printNfce(text1, text2, text3, qrCode, text4);
   }
 
   String _formateLine(String textInit, String textEnd) {

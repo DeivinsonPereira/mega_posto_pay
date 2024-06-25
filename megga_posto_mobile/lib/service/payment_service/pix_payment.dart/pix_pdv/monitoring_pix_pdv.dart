@@ -110,8 +110,8 @@ class MonitoringPixPdv {
     final _paymentGet = PaymentGet();
     final _paymentFeatures = PaymentFeatures();
     await InsertDataPix().insert(_paymentGet.getEnteredValue(), _qrdinamico);
-    if (_paymentGet.getRemainingValueRestanding() == 0 ||
-        _paymentGet.getRemainingValueRestanding() < 0) {
+    if (_paymentGet.getRemainingValue() == 0 || //TODO teste modificado de get aqui
+        _paymentGet.getRemainingValue() < 0) {
       QuantityBack.back(6);
       _executeFinally();
       return;

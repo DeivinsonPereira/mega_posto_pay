@@ -9,18 +9,18 @@ import 'monitoring_pix_pdv.dart';
 
 class PixPdv implements IPixPdv {
   final MonitoringPixPdv _monitoring = MonitoringPixPdv();
-  
+
   // Executa a forma de pagamento Pix
   @override
-  Future<void> payment() async {
+  Future<void> payment({BuildContext? context}) async {
     PaymentPixPdv _paymentPixPdv = await PaymentPixPdv.create();
     await _paymentPixPdv.payment();
   }
 
   // Cria uma nova isolate e fica buscando o status do pagamento
   @override
-  Future<void> isolateMonitoring(BuildContext context,
-      QrDinamicoResult qrdinamico, PixPdvSdk sdk) async {
-    _monitoring.isolateMonitoring(context ,qrdinamico, sdk);
+  Future<void> isolateMonitoring(
+      BuildContext context, QrDinamicoResult qrdinamico, PixPdvSdk sdk) async {
+    _monitoring.isolateMonitoring(context, qrdinamico, sdk);
   }
 }

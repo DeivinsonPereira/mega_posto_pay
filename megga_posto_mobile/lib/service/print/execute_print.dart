@@ -4,15 +4,19 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/utils/date_time_formatter.dart';
+import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/format_numbers.dart';
-import 'package:megga_posto_mobile/utils/methods/bill/bill_get.dart';
 import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
 import '../../utils/native_channel.dart';
 
 class ExecutePrint {
-  final _billGet = BillGet();
+  final _paymentController = Dependencies.paymentController();
   final _logger = SingletonsInstances().logger;
+
+  ExecutePrint._privateConstructor();
+
+  static final ExecutePrint instance = ExecutePrint._privateConstructor();
 
   Future<void> printText(String text, BuildContext context) async {
     try {
@@ -50,7 +54,7 @@ class ExecutePrint {
       String dueHour =
           DatetimeFormatter.getDataHoraOptionalPlusMinutes(time, minutes: 5);
       String value =
-          FormatNumbers.formatNumbertoString(_billGet.getTotalValueFromCart());
+          FormatNumbers.formatNumbertoString(_paymentController.enteredValue.value);
 
       final Map<String, dynamic> printSettings = {
         'tipoImpressao': 'printPixQrCode',
@@ -101,6 +105,38 @@ class ExecutePrint {
       }
     } catch (e) {
       _logger.e("Erro ao imprimir QRCode: $e");
+    }
+  }
+
+  Future<void> printNfceImage(Uint8List? imageNfce, int sizeheight) async {
+    try {
+      _logger.d('Iniciando o envio para a impressão do texto');
+
+      final Map<String, dynamic> printSettings = {
+        'tipoImpressao': 'imprimeImageByPDF',
+        'imagemBMP': imageNfce,
+        'sizeHeight' : sizeheight
+      };
+
+      await NativeChannel.platform.invokeMethod('imprimir', printSettings);
+    } catch (e) {
+      _logger.e("Erro ao imprimir Nfce: $e");
+    }
+  }
+
+  Future<void> printSignatureImage(Uint8List? imageNfce, int sizeHeight) async {
+    try {
+      _logger.d('Iniciando o envio para a impressão do texto');
+
+      final Map<String, dynamic> printSettings = {
+        'tipoImpressao': 'imprimeImageByPDF',
+        'imagemBMP': imageNfce,
+        'sizeHeight' : sizeHeight
+      };
+
+      await NativeChannel.platform.invokeMethod('imprimir', printSettings);
+    } catch (e) {
+      _logger.e("Erro ao imprimir Nfce: $e");
     }
   }
 }

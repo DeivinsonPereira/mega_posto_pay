@@ -5,16 +5,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
-import 'package:logger/logger.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
+import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
 import '../../model/supply_pump_model.dart';
 import '../../utils/auth.dart';
 import '../../utils/endpoints.dart';
 
 class GetSupplyPump {
-  var configController = Dependencies.configController();
-  Logger logger = Logger();
+  final _configController = Dependencies.configController();
+  final _logger = SingletonsInstances().logger;
 
   Future<List<SupplyPump>> getSupplyPump(
       BuildContext context, int idSupplyPump) async {
@@ -24,13 +24,13 @@ class GetSupplyPump {
 
     IOClient ioClient = IOClient(client);
 
-    Uri uri = Uri.parse(Endpoints.endpointSupplyPump());
+    Uri uri = Uri.parse(Endpoints.supplyPump());
 
     try {
       var bodyRequest = {
         "pidbico": idSupplyPump,
-        "pidatendente": configController.idUsuario.value,
-        
+        "pidatendente": _configController.idUsuario.value,
+        "pcaixa_id": _configController.dataPos.dadosCaixa?[0].caixaId ?? 0
       };
 
       var response = await ioClient.post(
@@ -48,15 +48,15 @@ class GetSupplyPump {
           }
           return supplies;
         } else {
-          logger.e('Erro ao buscar abastecimentos. ${data['message']}');
+          _logger.e('Erro ao buscar abastecimentos. ${data['message']}');
           return [];
         }
       } else {
-        logger.e('Erro ao buscar abastecimentos. ${response.statusCode}');
+        _logger.e('Erro ao buscar abastecimentos. ${response.statusCode}');
         return [];
       }
     } catch (e) {
-      logger.e('Erro ao buscar abastecimentos. erro: $e');
+      _logger.e('Erro ao buscar abastecimentos. erro: $e');
       return [];
     }
   }

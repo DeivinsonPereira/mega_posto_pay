@@ -6,7 +6,7 @@ import 'package:megga_posto_mobile/integracao/padrao/paypadrao_enums.dart';
 import 'package:megga_posto_mobile/integracao/padrao/paypadrao_formapgto_model.dart';
 import 'package:megga_posto_mobile/integracao/padrao/paypadrao_retorno_model.dart';
 import 'package:megga_posto_mobile/model/payment_cartao_model.dart';
-import 'package:megga_posto_mobile/service/payment_service/cash_payment.dart/logic_finish_payment.dart';
+import 'package:megga_posto_mobile/service/payment_service/logic_finish_payment.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 
 

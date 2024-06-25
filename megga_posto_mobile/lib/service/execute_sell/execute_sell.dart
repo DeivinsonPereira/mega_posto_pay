@@ -9,14 +9,13 @@ import 'package:megga_posto_mobile/model/product_and_quantity_model.dart';
 import 'package:megga_posto_mobile/model/retorno_fechamento_model.dart';
 import 'package:megga_posto_mobile/model/sell_item_model.dart';
 import 'package:megga_posto_mobile/service/execute_sell/interface/i_execute_sell.dart';
+import 'package:megga_posto_mobile/utils/auth.dart';
 import 'package:megga_posto_mobile/utils/endpoints.dart';
 import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 import '../../model/payment_form_selected.dart';
 import '../../model/sell_model.dart';
-import '../../model/supply_model.dart';
 import '../../model/supply_pump_model.dart';
 import '../../utils/dependencies.dart';
-import '../../utils/auth.dart';
 import 'package:http/http.dart' as http;
 
 class ExecuteSell implements IExecuteSell {
@@ -34,7 +33,7 @@ class ExecuteSell implements IExecuteSell {
   List<PaymentFormSelected> listPaymentsSelected = [];
 
   @override
-  Future<String> executeSell({Supply? supply, SupplyPump? supplyPump}) async {
+  Future<String> executeSell() async {
     try {
       _addTotalNota();
       _addTotalProduct();
@@ -50,14 +49,15 @@ class ExecuteSell implements IExecuteSell {
 
       Sell sell = await getSell();
 
-      var request =
-          http.MultipartRequest('POST', Uri.parse(Endpoints.endpointVenda()));
+      var request = http.MultipartRequest('POST', Uri.parse(Endpoints.venda()));
+      request.headers['Authorization'] = Auth.basicAuth;
 
-      request.fields['json'] = jsonEncode(sell);
+      request.fields['x-venda'] = sell.toJson();
 
-      if (_paymentController.assignaturePng.isNotEmpty) {
+      if (_paymentController.assignaturePng.isNotEmpty ||
+          _paymentController.assignaturePng != Uint8List(0)) {
         request.files.add(http.MultipartFile.fromBytes(
-          'file',
+          'x-assinatura',
           _paymentController.assignaturePng,
           filename: 'assignature.png',
           contentType: http.MultipartFile.fromBytes(
@@ -68,7 +68,6 @@ class ExecuteSell implements IExecuteSell {
       }
 
       var streamedResponse = await _ioClient.send(request);
-
       if (kDebugMode) print(sell.toJson());
       if (kDebugMode) print(streamedResponse.stream);
 
@@ -104,7 +103,7 @@ class ExecuteSell implements IExecuteSell {
   Future<Sell> getSell() async {
     Sell sell;
     sell = Sell(
-      serial: 'sdsdsdsdscr34343', // TODO colocar o serial correto
+      serial: _configController.serialDevice,
       valor_desconto: 0,
       cliente_id: 1,
       data_venda: DateTime.now().toIso8601String(),

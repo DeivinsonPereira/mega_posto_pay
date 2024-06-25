@@ -12,7 +12,7 @@ class PaymentController extends GetxController {
 
   List<PaymentForm> paymentForms = [];
   List<String> paymentFormsDocto = [];
-  late Uint8List assignaturePng;
+  late Uint8List assignaturePng = Uint8List(0);
 
   RxList<PaymentExecuted> listPaymentsSelected = <PaymentExecuted>[].obs;
 
@@ -21,4 +21,7 @@ class PaymentController extends GetxController {
   RxDouble enteredValue = 0.0.obs;
 
   bool isAutoFilled = true;
+
+  String hashPix = '';
+  String qrCodePenseBankPix = '';
 }

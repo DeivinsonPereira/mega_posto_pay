@@ -13,6 +13,8 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.megga_posto_mobile.R;
+
 import br.com.gertec.gedi.GEDI;
 import br.com.gertec.gedi.interfaces.ICL;
 import br.com.gertec.gedi.structs.GEDI_CL_st_ISO_PollingInfo;
@@ -89,7 +91,7 @@ public class NfcGedi extends AppCompatActivity {
         IntentFilter[] nfcIntentFilter = new IntentFilter[] { techDetected, tagDetected, ndefDetected, idDetected };
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_IMMUTABLE);
         if (nfcAdapter != null)
             nfcAdapter.enableForegroundDispatch(this, pendingIntent, nfcIntentFilter, null);
 

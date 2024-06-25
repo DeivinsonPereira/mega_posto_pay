@@ -24,7 +24,7 @@ class GetCredentials {
 
     IOClient ioClient = IOClient(client);
 
-    Uri uri = Uri.parse(Endpoints.endpointCredentials());
+    Uri uri = Uri.parse(Endpoints.credentials());
 
     try {
       var response = await ioClient.post(uri, headers: Auth.header).timeout(

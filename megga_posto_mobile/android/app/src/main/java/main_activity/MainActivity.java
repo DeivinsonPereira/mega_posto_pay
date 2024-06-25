@@ -21,6 +21,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+
 import android.util.Log;
 
 import br.com.gertec.gedi.exceptions.GediException;
@@ -32,7 +34,7 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import static android.hardware.Camera.Parameters.FLASH_MODE_ON;
 
 public class MainActivity extends FlutterActivity {
-    private GertecPrinter gertecPrinter;
+    private com.example.megga_posto_mobile.GertecPrinter gertecPrinter;
     public static final String G700 = "GPOS700";
     private MethodChannel.Result _result; // Instanciando uma variavel do tipo Result, para enviar o resultado para o
     // flutter
@@ -43,8 +45,8 @@ public class MainActivity extends FlutterActivity {
     private String tipo; // Armazerna o tipo de codigo de barra que ser lido
     private ArrayList<String> arrayListTipo;
     private static final String CHANNEL = "samples.flutter.dev/gedi"; // Canal de comunicação do flutter com o Java
-    private ConfigPrint configPrint = new ConfigPrint();
-    private SatLib satLib;
+    private com.example.megga_posto_mobile.ConfigPrint configPrint = new com.example.megga_posto_mobile.ConfigPrint();
+    private com.example.megga_posto_mobile.SatLib satLib;
     Intent intentGer7 = new Intent(Intent.ACTION_VIEW, Uri.parse("pos7api://pos7")); // Instanciando o Intent da Ger7 --
     // É importante que o apk da Ger7
     // esteje instalado na POS
@@ -63,9 +65,9 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        satLib = new SatLib(this); // Instancia uma variavel da classe SatLib, que possui todas as funções para
+        satLib = new com.example.megga_posto_mobile.SatLib(this); // Instancia uma variavel da classe SatLib, que possui todas as funções para
         // envio de ações para o Sat.
-        gertecPrinter = new GertecPrinter(this);
+        gertecPrinter = new com.example.megga_posto_mobile.GertecPrinter(this);
     }
 
     public MainActivity() {
@@ -85,7 +87,7 @@ public class MainActivity extends FlutterActivity {
                         // Inicia o intent que vai fazer a leitura do Nfc pelo metodo Nativo
                         case "lernfcid":
                             try {
-                                intent = new Intent(this, LeitorNFC.class);
+                                intent = new Intent(this, com.example.megga_posto_mobile.LeitorNFC.class);
                                 intent.putExtra("tipoleitura", "NFC ID");
                                 startActivityForResult(intent, 109);
                             } catch (Exception e) {
@@ -96,7 +98,7 @@ public class MainActivity extends FlutterActivity {
                         // Inicia o intent que vai fazer a leitura do Nfc pelo metodo Gedi
                         case "lernfcgedi":
                             try {
-                                intent = new Intent(this, NfcGedi.class);
+                                intent = new Intent(this, com.example.megga_posto_mobile.NfcGedi.class);
                                 intent.putExtra("tipoleitura", "NFC GEDI");
                                 startActivityForResult(intent, 108);
                             } catch (Exception e) {
@@ -195,7 +197,7 @@ public class MainActivity extends FlutterActivity {
                         // Inicia o intent que vai fazer a leitura do codigo de barras v2
                         // Ler qualquer tipo de codigo de barra
                         case "leitorCodigoV2":
-                            intent = new Intent(this, CodigoBarrasV2.class);
+                            intent = new Intent(this, com.example.megga_posto_mobile.CodigoBarrasV2.class);
                             startActivity(intent);
                             break;
                         // Inicia o intent que vai enviar o Json recebido do flutter para o Ger7 e após
@@ -261,27 +263,46 @@ public class MainActivity extends FlutterActivity {
                                             configPrint.setiWidth(400);
                                             configPrint.setiHeight(400);
                                             gertecPrinter.setConfigImpressao(configPrint);
-                                            gertecPrinter.imprimeImagem(call.argument("imagemBMP"));
-                                           //gertecPrinter.avancaLinha(100);
+                                            String imagemBMP = call.argument("imagemBMP");
+                                            if (imagemBMP != null && !imagemBMP.isEmpty()) {
+                                                try {
+                                                    gertecPrinter.imprimeImagem(imagemBMP);
+                                                } catch (Exception e) {
+                                                    System.err.println("Erro ao imprimir a imagem: " + e.getMessage());
+                                                }
+                                            } else {
+                                                System.err.println("Erro: Imagem Base64 inválida ou vazia.");
+                                            }
                                             break;
-                                        case "CodigoDeBarra":
+                                        case "imprimeImageByPDF":
+                                            configPrint.setItalico(false);
+                                            configPrint.setNegrito(true);
+                                            configPrint.setTamanho(20);
+                                            configPrint.setFonte("MONOSPACE");
+                                            gertecPrinter.setConfigImpressao(configPrint);
+                                            int sizeHeight = call.argument("sizeHeight");
+                                            configPrint.setiWidth(300);
+                                            configPrint.setiHeight(sizeHeight);
                                             configPrint.setAlinhamento("CENTER");
                                             gertecPrinter.setConfigImpressao(configPrint);
-                                            gertecPrinter.imprimeBarCodeIMG(mensagem, call.argument("height"),
-                                                    call.argument("width"), call.argument("barCode"));
-                                            //gertecPrinter.avancaLinha(100);
+                                            byte[] imagem = call.argument("imagemBMP");
+                                            if (imagem != null && imagem.length > 0) {
+                                                gertecPrinter.imprimeImagemByPDF(imagem);
+                                            } else {
+                                                System.err.println("Erro: Imagem BMP inválida ou vazia.");
+                                            }
                                             break;
                                         case "TodasFuncoes":
                                             ImprimeTodasAsFucoes();
                                             break;
                                         case "printPixQrCode":
-                                            printPixQrCode(call.argument("pix"), call.argument("initDate"), call.argument("dueDate"), call.argument("value"));   
-                                            break; 
+                                            printPixQrCode(call.argument("pix"), call.argument("initDate"), call.argument("dueDate"), call.argument("value"));
+                                            break;
                                         case "printNfce":
                                             printNfce(call.argument("text1"), call.argument("text2"), call.argument("text3"), call.argument("qrCode"), call.argument("text4"));
                                             break;
                                     }
-                                } 
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -294,7 +315,7 @@ public class MainActivity extends FlutterActivity {
                                 result.error("UNAVAILABLE", "Serial number not available.", null);
                             }
                         break;
-                            
+
                     }
                 });
     }
@@ -396,11 +417,13 @@ public class MainActivity extends FlutterActivity {
     }
 
     private void ImprimeTodasAsFucoes() {
+
         configPrint.setItalico(false);
         configPrint.setNegrito(true);
         configPrint.setTamanho(20);
         configPrint.setFonte("MONOSPACE");
         gertecPrinter.setConfigImpressao(configPrint);
+
         try {
             gertecPrinter.getStatusImpressora();
             // Imprimindo Imagem

@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, no_leading_underscores_for_local_identifiers
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
+import 'package:megga_posto_mobile/utils/methods/payment/payment_get.dart';
 import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
 import '../../../common/custom_colors_list.dart';
@@ -18,8 +20,9 @@ class CustomCardPaymentForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _logicWidget = SingletonsInstances().logicWidgets;
+    final _paymentGet = PaymentGet();
     final _paymentFeatures = PaymentFeatures();
+    final _logicWidget = SingletonsInstances().logicWidgets;
     LogicAddPayment _logicAddPayment = LogicAddPayment();
 
     // Constrói o texto do card
@@ -65,6 +68,12 @@ class CustomCardPaymentForm extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
       child: InkWell(
         onTap: () {
+          if (_paymentGet.isPaymentNotaExists(paymentFormSelected)) {
+            const CustomCherryError(
+              message: 'Não pode adicionar mais de um pagamento de nota.',
+            ).show(context);
+            return;
+          }
           _paymentFeatures.replaceIsAutoFillToTrue();
           _logicAddPayment.add(paymentFormSelected);
         },

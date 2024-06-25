@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 abstract class IPixPayment {
-  Future<void> payment();
+  Future<void> payment({BuildContext context});
 }

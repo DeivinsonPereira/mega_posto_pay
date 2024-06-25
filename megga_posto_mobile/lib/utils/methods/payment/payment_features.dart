@@ -59,7 +59,7 @@ class PaymentFeatures implements IPaymentFeatures {
         tipoDocto: paymentFormDocto,
         dataVencimento: DatetimeFormatter.formatDate(DateTime.now()),
         numParcela: 1,
-        valorParcela: 0,
+        valorParcela: _paymentController.enteredValue.value,
         valorIntegral: _paymentController.enteredValue.value,
         dadosCartao: dadosCartao,
         dadosPix: dadosPix,
@@ -110,48 +110,23 @@ class PaymentFeatures implements IPaymentFeatures {
     }
   }
 
+  void addHashPix(String hashPix) => _paymentController.hashPix = hashPix;
+  
+  void addQrCodePenseBankPix(String qrCode) =>
+      _paymentController.qrCodePenseBankPix = qrCode;
+
+  void clearHashPix() => _paymentController.hashPix = '';
+  
+  void clearQrCodePenseBankPix() => _paymentController.qrCodePenseBankPix = '';
+
   void setSignature(Uint8List assignaturePng) =>
       _paymentController.assignaturePng = assignaturePng;
-
-  void removeSignature() => _paymentController.assignaturePng = Uint8List(0);
 
   @override
   //Adiciona o valor na variável enteredValue
   void autoFillValuePayment() {
     _paymentController.enteredValue.value = _paymentGet.getRemainingValue();
     _paymentController.update();
-  }
-
-  @override
-  //Limpa todas as variáveis
-  void clearAll() {
-    _paymentController.valuePayment.value = 0;
-    _paymentController.enteredValue.value = 0;
-    _paymentController.listPaymentsSelected.clear();
-  }
-
-  @override
-  //Limpa a variável enteredValue
-  void clearEnteredValue() {
-    _paymentController.enteredValue.value = 0;
-    _paymentController.update();
-  }
-
-  @override
-  //Remove o valor na variável enteredValue
-  void removeNumberFromEnteredValue() {
-    if (_paymentController.enteredValue.value > 0) {
-      String valueString =
-          _paymentController.enteredValue.value.toStringAsFixed(2);
-      if (valueString.length > 1) {
-        String newValue = valueString.substring(0, valueString.length - 1);
-        double newValueDouble = double.parse(newValue) / 10;
-        _paymentController.enteredValue.value = newValueDouble;
-      } else {
-        _paymentController.enteredValue.value = 0;
-      }
-      _paymentController.update();
-    }
   }
 
   @override
@@ -192,5 +167,40 @@ class PaymentFeatures implements IPaymentFeatures {
 
   void replaceIsAutoFillToTrue() {
     _paymentController.isAutoFilled = true;
+  }
+
+  Future<void> removeSignature() async => _paymentController.assignaturePng = Uint8List(0);
+
+  @override
+  //Limpa todas as variáveis
+  Future<void> clearAll() async {
+    _paymentController.valuePayment.value = 0;
+    _paymentController.enteredValue.value = 0;
+    _paymentController.listPaymentsSelected.clear();
+    removeSignature();
+  }
+
+  @override
+  //Limpa a variável enteredValue
+  void clearEnteredValue() {
+    _paymentController.enteredValue.value = 0;
+    _paymentController.update();
+  }
+
+  @override
+  //Remove o valor na variável enteredValue
+  void removeNumberFromEnteredValue() {
+    if (_paymentController.enteredValue.value > 0) {
+      String valueString =
+          _paymentController.enteredValue.value.toStringAsFixed(2);
+      if (valueString.length > 1) {
+        String newValue = valueString.substring(0, valueString.length - 1);
+        double newValueDouble = double.parse(newValue) / 10;
+        _paymentController.enteredValue.value = newValueDouble;
+      } else {
+        _paymentController.enteredValue.value = 0;
+      }
+      _paymentController.update();
+    }
   }
 }

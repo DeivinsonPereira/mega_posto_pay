@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:megga_posto_mobile/model/collections/dado_empresa.dart';
 import 'package:megga_posto_mobile/model/collections/data_pix.dart';
-import 'package:megga_posto_mobile/service/device_info/get_info_device.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'model/collections/payment_form.dart';
@@ -39,11 +38,9 @@ void main() async {
 
   // TODO fazer Sangria
   // TODO fazer suprimento
-  // TODO modoficar a tela de pagamentos
-  // TODO funcionalidade do touch para assinatura
-  // TODO Realizar venda
   // TODO imprimir sangria, suprimento
   // TODO criar tela relatorio do caixa com a opção de imprimir
+  // TODO criar monitoramento
 
   runApp(const AppWidget());
 }

@@ -22,7 +22,7 @@ class GetDataPos {
   final _logger = Logger();
 
   Future<bool> getDataPos(BuildContext context) async {
-    Uri uri = Uri.parse(Endpoints.endpointCredetialPix());
+    Uri uri = Uri.parse(Endpoints.credetialPix());
 
     HttpClient client = HttpClient()
       ..badCertificateCallback =

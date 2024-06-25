@@ -5,7 +5,12 @@ import 'package:get/get.dart';
 import 'package:megga_posto_mobile/common/custom_continue_button.dart';
 import 'package:megga_posto_mobile/common/custom_header_app_bar.dart';
 import 'package:megga_posto_mobile/common/custom_text_style.dart';
+import 'package:megga_posto_mobile/controller/payment_controller.dart';
+import 'package:megga_posto_mobile/model/payment_executed_model.dart';
+import 'package:megga_posto_mobile/page/payment/components/custom_icon_payment.dart';
 import 'package:megga_posto_mobile/page/payment/components/dialogs/dialog_choose_payment.dart';
+import 'package:megga_posto_mobile/page/payment/enum/payment_type.dart';
+import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/format_numbers.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_get.dart';
 
@@ -18,7 +23,10 @@ class PaymentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _paymentGet = PaymentGet();
+    Dependencies.paymentController();
+    final _paymentGet = PaymentGet();
+    final _paymentType = PaymentType.instance;
+    final _customIconPayment = CustomIconPayment.instance;
 
     // Constrói o título da página
     Widget _buildTitle() {
@@ -30,7 +38,7 @@ class PaymentPage extends StatelessWidget {
 
     Widget _buildRemainingValue() {
       return Obx(() => Text(
-            'Restante R\$ ${FormatNumbers.formatNumbertoString(_paymentGet.getRemainingValueRestanding())}',
+            'Restante R\$ ${FormatNumbers.formatNumbertoString(_paymentGet.getRemainingValue())}',
             style: CustomTextStyles.blackBoldStyle(24),
           ));
     }
@@ -47,6 +55,62 @@ class PaymentPage extends StatelessWidget {
           text: 'Pagar',
           function: () => Get.dialog(
               barrierDismissible: false, const DialogChoosePayment()));
+    }
+
+    Widget _buildPaymentName(String name) {
+      return Text(
+        name,
+        style: CustomTextStyles.blackStyle(18),
+      );
+    }
+
+    Widget _buildPaymentValue(PaymentExecuted paymentExecutedSelected) {
+      return Text(
+        'R\$ ${FormatNumbers.formatNumbertoString(paymentExecutedSelected.valorIntegral)}',
+        style: CustomTextStyles.blackStyle(18),
+      );
+    }
+
+    Widget _buildLinePayment(
+        String name, PaymentExecuted paymentExecutedSelected) {
+      return Container(
+        decoration:
+            BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+          child: Row(
+            children: [
+              _customIconPayment.buildIcon(name),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildPaymentName(name),
+                    _buildPaymentValue(paymentExecutedSelected),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget _buildListPaymentExecuted() {
+      return GetBuilder<PaymentController>(builder: (_) {
+        return ListView.builder(
+            itemCount: _.listPaymentsSelected.length,
+            itemBuilder: (context, index) {
+              PaymentExecuted paymentExecutedSelected =
+                  _.listPaymentsSelected[index];
+              String namePayment = _paymentType
+                  .doctoToPaymentType(paymentExecutedSelected.tipoDocto ?? '');
+              return _buildLinePayment(namePayment, paymentExecutedSelected);
+            });
+      });
     }
 
     // constrói o corpo dos botões de voltar e continuar
@@ -69,7 +133,10 @@ class PaymentPage extends StatelessWidget {
             CustomHeaderAppBar(isPayment: true),
             _buildTitle(),
             _buildRemainingValue(),
-            const Expanded(child: SizedBox()),
+            SizedBox(height: Get.size.height * 0.03),
+            Expanded(
+              child: _buildListPaymentExecuted(),
+            ),
             const CustomContainerTotal(),
             _buildBackAndContinueButtonBody(),
           ],

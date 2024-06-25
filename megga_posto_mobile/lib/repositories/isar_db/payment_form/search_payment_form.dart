@@ -13,11 +13,9 @@ class SearchPaymentForm {
   final Logger _logger = Logger();
 
   Future<List<PaymentForm>> search() async {
+    Uri uri = Uri.parse(Endpoints.paymentForm());
 
-    Uri uri = Uri.parse(Endpoints.endpointPaymentForm());
-
-
-   HttpClient client = HttpClient()
+    HttpClient client = HttpClient()
       ..badCertificateCallback =
           ((X509Certificate cert, String host, int port) => true);
 
@@ -26,20 +24,20 @@ class SearchPaymentForm {
     try {
       var response = await ioClient.post(uri, headers: Auth.header);
 
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        if(data['success'] == true) {
+        if (data['success'] == true) {
           List<PaymentForm> paymentForms = [];
-          for(var paymentForm in data['data']) {
+          for (var paymentForm in data['data']) {
             paymentForms.add(PaymentForm.fromMap(paymentForm));
           }
           InsertPaymentForm().insert(paymentForms);
           return paymentForms;
-        }else {
+        } else {
           _logger.e('Erro ao buscar formas de pagamento. ${data['message']}');
           return [];
         }
-      }else {
+      } else {
         _logger.e('Erro ao buscar formas de pagamento. ${response.statusCode}');
         return [];
       }

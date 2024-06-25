@@ -6,7 +6,7 @@ import 'package:megga_posto_mobile/common/custom_back_button.dart';
 import 'package:megga_posto_mobile/common/custom_continue_button.dart';
 import 'package:megga_posto_mobile/common/custom_header_dialog.dart';
 import 'package:megga_posto_mobile/page/payment/enum/modalidade_payment.dart';
-import 'package:megga_posto_mobile/service/payment_service/cash_payment.dart/logic_finish_payment.dart';
+import 'package:megga_posto_mobile/service/payment_service/logic_finish_payment.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/format_numbers.dart';
 import '../../../../common/custom_text_style.dart';

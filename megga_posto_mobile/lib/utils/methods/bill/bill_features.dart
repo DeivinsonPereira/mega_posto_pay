@@ -7,6 +7,7 @@ import 'package:megga_posto_mobile/model/supply_model.dart';
 import 'package:megga_posto_mobile/model/supply_pump_model.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/methods/bill/bill_get.dart';
+import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
 import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
 import '../../../repositories/isar_db/product/get_product.dart';
@@ -14,6 +15,7 @@ import '../../../repositories/isar_db/product/get_product.dart';
 class BillFeatures {
   final _billController = Dependencies.billController();
   final _billGet = BillGet();
+  final _paymentFeatures = PaymentFeatures();
   final _logger = SingletonsInstances().logger;
 
   BillFeatures._privateConstructor();
@@ -143,7 +145,10 @@ class BillFeatures {
     _billController.cartShopping.remove(cartShopping);
 
     if (isCartShopping) {
-      if (_billController.cartShopping.isEmpty) Get.back();
+      if (_billController.cartShopping.isEmpty) {
+        Get.back();
+        _paymentFeatures.clearAll();
+      }
     }
     _updateVariables();
   }
