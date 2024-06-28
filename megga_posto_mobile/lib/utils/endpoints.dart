@@ -73,17 +73,56 @@ abstract class Endpoints {
 
     int? ambiente = configController.dataPos.credenciaisPix?[0].ambiente;
 
-    if(ambiente == null) return '';
+    if (ambiente == null) return '';
 
-      if(ambiente == 0 || ambiente == 2) {
-        endpoint = 'https://sandbox.pensebank.com.br/$suffix';
-      }
+    if (ambiente == 0 || ambiente == 2) {
+      endpoint = 'https://sandbox.pensebank.com.br/$suffix';
+    }
 
-      if(ambiente == 1) {
-        endpoint = 'https://api.pensebank.com.br/$suffix';
-      }
-      
-      return endpoint;
-      
+    if (ambiente == 1) {
+      endpoint = 'https://api.pensebank.com.br/$suffix';
+    }
+
+    return endpoint;
+  }
+
+  static String statusPenseBankPix(String hash) {
+    return 'https://api.pensebank.com.br/Payment/$hash';
+  }
+
+  static String sangria() {
+    return '${ip}grava_sangria';
+  }
+
+  static String suprimento() {
+    return '${ip}grava_suprimento';
+  }
+
+  static String retornaSaldoDocumento() {
+    return '${ip}retorna_saldo_documento';
+  }
+
+  static String estoqueProduto() {
+    return '${ip}estoque_produto';
+  }
+
+  static String returnaListaReimpressao() {
+    return '${ip}retorna_lista_venda_reimpressao';
+  }
+
+  static String reimprimeCupom() {
+    return '${ip}reimprime_cupom';
+  }
+
+  static String retornaResumoFinanceiro() {
+    return '${ip}resumo_financeiro';
+  }
+  
+  static String gravaDespesa() {
+    return '${ip}grava_despesa';
+  }
+  
+  static String gravaVale() {
+    return '${ip}grava_vale';
   }
 }

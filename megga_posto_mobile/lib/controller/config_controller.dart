@@ -12,19 +12,19 @@ enum PcnTipoSmartPos {
   tpPosPagseguro,
 }
 
-
 class ConfigController extends GetxController {
   TextEditingController ipServidorController = TextEditingController();
   var ipServidor = ''.obs;
   var idUsuario = 0.obs;
+  String nomeUsuario = '';
   var serialDevice = '';
   late Credentials credential;
   late DataPos dataPos;
 
-
   PcnTipoSmartPos tipoSmartPos() {
-    bool isDadosCreTefNull = (dataPos.credenciaisTef?.isEmpty??true);
-    CredentialTef credencialtef = isDadosCreTefNull ? CredentialTef() : dataPos.credenciaisTef![0];
+    bool isDadosCreTefNull = (dataPos.credenciaisTef?.isEmpty ?? true);
+    CredentialTef credencialtef =
+        isDadosCreTefNull ? CredentialTef() : dataPos.credenciaisTef![0];
 
     if (credencialtef.tipoIntegracaoSmartpos == 1) {
       return PcnTipoSmartPos.tpPosSitef;
@@ -42,7 +42,4 @@ class ConfigController extends GetxController {
   bool isSmartPos() {
     return PcnTipoSmartPos.tpPosNenhum != tipoSmartPos();
   }
-
-
- 
 }

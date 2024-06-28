@@ -43,7 +43,8 @@ class LoginNfcRepository implements IExecuteLogin {
         var data = jsonDecode(response.body);
         if (data['success'] == true) {
           var idUser = data['data']['ID'];
-          return _handleSuccessfulLogin(context, idUser);
+          var name = data['data']['NOME'];
+          return _handleSuccessfulLogin(context, idUser, name);
         } else {
           return _showError(context, data['message']);
         }
@@ -82,8 +83,8 @@ class LoginNfcRepository implements IExecuteLogin {
   }
 
   // Lógica caso login seja bem sucedido
-  Future<bool> _handleSuccessfulLogin(BuildContext context, int idUser) async {
-    await _loginUtils.updateConfigVariables(idUser);
+  Future<bool> _handleSuccessfulLogin(BuildContext context, int idUser, String name) async {
+    await _loginUtils.updateConfigVariables(idUser, name);
     await _loginUtils.updateLocalDatabase(context, idUser);
     await Future.delayed(const Duration(seconds: 2));
     await _loginUtils.setPaymentForms();

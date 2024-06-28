@@ -53,7 +53,7 @@ class PaymentPixPdv {
           var imageBytes =
               base64Decode(result.qrDinamicoResultData!.qrcodeBase64!);
 
-          await Get.dialog(
+          Get.dialog(
             barrierDismissible: false,
             PixPdvPaymentDialog(
               sdk: _instancePix,

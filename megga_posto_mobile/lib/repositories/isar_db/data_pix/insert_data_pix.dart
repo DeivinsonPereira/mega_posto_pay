@@ -16,7 +16,7 @@ class InsertDataPix {
 
   Future<void> insert(double value, QrDinamicoResult dataPix) async {
     final isar = await _isarService.openDB();
-  
+
     DataPix data = DataPix(
         date: DatetimeFormatter.formatDate(DateTime.now()),
         hour: DatetimeFormatter.formatHour(DateTime.now()),

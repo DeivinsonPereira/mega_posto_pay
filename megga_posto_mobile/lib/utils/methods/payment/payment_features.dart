@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:get/get.dart';
@@ -110,15 +111,6 @@ class PaymentFeatures implements IPaymentFeatures {
     }
   }
 
-  void addHashPix(String hashPix) => _paymentController.hashPix = hashPix;
-  
-  void addQrCodePenseBankPix(String qrCode) =>
-      _paymentController.qrCodePenseBankPix = qrCode;
-
-  void clearHashPix() => _paymentController.hashPix = '';
-  
-  void clearQrCodePenseBankPix() => _paymentController.qrCodePenseBankPix = '';
-
   void setSignature(Uint8List assignaturePng) =>
       _paymentController.assignaturePng = assignaturePng;
 
@@ -169,7 +161,28 @@ class PaymentFeatures implements IPaymentFeatures {
     _paymentController.isAutoFilled = true;
   }
 
-  Future<void> removeSignature() async => _paymentController.assignaturePng = Uint8List(0);
+  void startTimerIsolate(Duration duration, Function() callback) {
+    _paymentController.timerIsolate?.cancel();
+    _paymentController.timerIsolate = Timer(duration, callback);
+  }
+
+  void startTimerButton(Duration duration, Function() callback) {
+    _paymentController.timerButton?.cancel();
+    _paymentController.timerButton = Timer(duration, callback);
+  }
+
+  void cancelTimerButton() {
+    _paymentController.timerButton?.cancel();
+    _paymentController.timerButton = null;
+  }
+
+  void cancelTimer() {
+    _paymentController.timerIsolate?.cancel();
+    _paymentController.timerIsolate = null;
+  }
+
+  Future<void> removeSignature() async =>
+      _paymentController.assignaturePng = Uint8List(0);
 
   @override
   //Limpa todas as variáveis

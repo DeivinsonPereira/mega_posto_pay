@@ -14,9 +14,6 @@ class ExecutePrint {
   final _paymentController = Dependencies.paymentController();
   final _logger = SingletonsInstances().logger;
 
-  ExecutePrint._privateConstructor();
-
-  static final ExecutePrint instance = ExecutePrint._privateConstructor();
 
   Future<void> printText(String text, BuildContext context) async {
     try {
@@ -45,6 +42,32 @@ class ExecutePrint {
     }
   }
 
+  Future<void> printTextCashRegister(
+      String text1, String text2, String text3, BuildContext context) async {
+    try {
+      _logger.d('Iniciando o envio para a impressão do texto');
+
+      final Map<String, dynamic> printSettings = {
+        'tipoImpressao': 'printCashRegister',
+        'text1': text1,
+        'text2': text2,
+        'text3': text3,
+      };
+
+      var result =
+          await NativeChannel.platform.invokeMethod('imprimir', printSettings);
+      if (result != null) {
+        _logger.d("Método readNfc chamado com sucesso, resultado: $result");
+      } else {
+        _logger.e("Erro ao ler NFC");
+      }
+    } on PlatformException catch (e) {
+      _logger.e("Erro ao ler NFC: $e");
+    } catch (e) {
+      _logger.e("Erro ao ler NFC: $e");
+    }
+  }
+
   Future<void> printQrCodeAndText(
       String pix, DateTime time, BuildContext context) async {
     try {
@@ -53,8 +76,8 @@ class ExecutePrint {
       String initHour = DatetimeFormatter.getDataHoraOptionalPlusMinutes(time);
       String dueHour =
           DatetimeFormatter.getDataHoraOptionalPlusMinutes(time, minutes: 5);
-      String value =
-          FormatNumbers.formatNumbertoString(_paymentController.enteredValue.value);
+      String value = FormatNumbers.formatNumbertoString(
+          _paymentController.enteredValue.value);
 
       final Map<String, dynamic> printSettings = {
         'tipoImpressao': 'printPixQrCode',
@@ -115,7 +138,7 @@ class ExecutePrint {
       final Map<String, dynamic> printSettings = {
         'tipoImpressao': 'imprimeImageByPDF',
         'imagemBMP': imageNfce,
-        'sizeHeight' : sizeheight
+        'sizeHeight': sizeheight
       };
 
       await NativeChannel.platform.invokeMethod('imprimir', printSettings);
@@ -131,7 +154,7 @@ class ExecutePrint {
       final Map<String, dynamic> printSettings = {
         'tipoImpressao': 'imprimeImageByPDF',
         'imagemBMP': imageNfce,
-        'sizeHeight' : sizeHeight
+        'sizeHeight': sizeHeight
       };
 
       await NativeChannel.platform.invokeMethod('imprimir', printSettings);

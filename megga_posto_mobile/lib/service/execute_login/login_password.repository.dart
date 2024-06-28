@@ -45,7 +45,8 @@ class LoginPasswordRepository implements IExecuteLogin {
         var data = jsonDecode(response.body);
         if (data['success'] == true) {
           var idUser = data['data']['ID'];
-          _handleSuccessfulLogin(context, idUser);
+          var name = data['data']['NOME'];
+          _handleSuccessfulLogin(context, idUser, name);
         } else {
           _showError(context, data['message'], data['message']);
         }
@@ -59,8 +60,8 @@ class LoginPasswordRepository implements IExecuteLogin {
   }
 
   // Caso o login seja bem-sucedido
-  Future<void> _handleSuccessfulLogin(BuildContext context, int idUser) async {
-    await _loginUtils.updateConfigVariables(idUser);
+  Future<void> _handleSuccessfulLogin(BuildContext context, int idUser, String name) async {
+    await _loginUtils.updateConfigVariables(idUser, name);
     await _loginUtils.updateLocalDatabase(context, idUser);
     await Future.delayed(const Duration(seconds: 2));
     await LoginUtils().executeLoginPassword(context, isNfc: false);
@@ -73,7 +74,6 @@ class LoginPasswordRepository implements IExecuteLogin {
 
   // Limpa os campos de login e senha
   void _updateLoginVariables() {
-    _loginController.usuarioController.text = '';
     _loginController.senhaController.text = '';
   }
 

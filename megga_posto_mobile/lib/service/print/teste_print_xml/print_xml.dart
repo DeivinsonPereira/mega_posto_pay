@@ -11,7 +11,6 @@ class PrintXml {
   var paymentController = Dependencies.paymentController();
 
   Future<void> printXml(String xml) async {
-
     xml2Json.parse(xml);
     var jsonString = xml2Json.toParker();
     var data = jsonDecode(jsonString);
@@ -100,7 +99,7 @@ class PrintXml {
     text4 += 'Fonte: ${information.fonte!}\n';
     text4 += '------------------------------------------\n';
 
-    await ExecutePrint.instance.printNfce(text1, text2, text3, qrCode, text4);
+    await ExecutePrint().printNfce(text1, text2, text3, qrCode, text4);
   }
 
   String _formateLine(String textInit, String textEnd) {

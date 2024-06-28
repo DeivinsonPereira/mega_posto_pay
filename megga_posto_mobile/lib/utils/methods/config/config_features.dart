@@ -43,7 +43,6 @@ class ConfigFeatures implements IConfigFeatures {
           _configController.ipServidorController.text.endsWith('/')
               ? _configController.ipServidorController.text
               : '${_configController.ipServidorController.text}/';
-      ;
     } else {
       DadoEmpresa data = await GetDadoEmpresa().getDadoEmpresa();
       if (data.ipEmpresa.isNotEmpty) {
@@ -55,15 +54,17 @@ class ConfigFeatures implements IConfigFeatures {
 
   @override
   // Atualiza a variável idUsuario
-  Future<void> updateIdUsuario(int idUser) async {
+  Future<void> updateIdUsuarioAndName(int idUser, String name) async {
     DadoEmpresa data = await GetDadoEmpresa().getDadoEmpresa();
 
     if (idUser != -1) {
       _configController.idUsuario.value = idUser;
+      _configController.nomeUsuario = name;
     } else if (data.idUsuario == null) {
       _configController.idUsuario.value = -1;
     } else {
       _configController.idUsuario.value = data.idUsuario!;
+      _configController.nomeUsuario = name;
     }
   }
 }

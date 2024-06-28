@@ -18,10 +18,11 @@ class LoginUtils {
   final _configFeatures = ConfigFeatures.instance;
   final _paymentFeatures = PaymentFeatures();
   // Lógica para atualizar as variáveis de configuração
-  Future<void> updateConfigVariables(int idUser, {bool isNfce = false}) async {
+  Future<void> updateConfigVariables(int idUser, String name,
+      {bool isNfce = false}) async {
     if (isNfce) QuantityBack.back(2);
 
-    await _configFeatures.updateIdUsuario(idUser);
+    await _configFeatures.updateIdUsuarioAndName(idUser, name);
   }
 
   // Lógica para atualizar o banco de dados local

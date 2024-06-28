@@ -4,18 +4,18 @@ import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 
-class IsolatePixPdvManager {
+class IsolatePixManager {
   Isolate? _isolate;
   ReceivePort? _receivePort;
   SendPort? _sendPort;
   ReceivePort? _responsePort;
 
-  IsolatePixPdvManager._privateConstructor();
+  IsolatePixManager._privateConstructor();
 
-  static final IsolatePixPdvManager _instance =
-      IsolatePixPdvManager._privateConstructor();
+  static final IsolatePixManager _instance =
+      IsolatePixManager._privateConstructor();
 
-  static IsolatePixPdvManager get instance => _instance;
+  static IsolatePixManager get instance => _instance;
 
   void startVariables(Isolate isolate, ReceivePort receivePort,
       ReceivePort responsePort, SendPort sendPort) {
@@ -29,16 +29,19 @@ class IsolatePixPdvManager {
 
   void _killCurrent() {
     _isolate?.kill(priority: Isolate.immediate);
+    _isolate = null;
+
     _responsePort?.close();
+    _responsePort = null;
+
     _receivePort?.close();
+    _receivePort = null;
+
+    _sendPort = null;
   }
 
   void kill() {
     _killCurrent();
-    _isolate = null;
-    _receivePort = null;
-    _responsePort = null;
-    _sendPort = null;
-    if(kDebugMode) print('IsolatePixPdvManager killed');
+    if (kDebugMode) print('IsolatePixPdvManager killed');
   }
 }

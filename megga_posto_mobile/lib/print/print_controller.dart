@@ -12,9 +12,8 @@ class PrintController extends GetxController {
 
   final _configController = Dependencies.configController();
   final _paymentController = Dependencies.paymentController();
-  final _paymentFeatures = PaymentFeatures();
   final _smartPrintController = Dependencies.smartGenericController();
-  final _executePrint = ExecutePrint.instance;
+  final _executePrint = ExecutePrint();
 
   @override
   void onInit() {

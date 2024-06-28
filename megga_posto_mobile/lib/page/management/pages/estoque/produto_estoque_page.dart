@@ -2,29 +2,53 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:megga_posto_mobile/page/management/dialogs/components/custom_buttons_dialog.dart';
-import 'package:megga_posto_mobile/page/management/dialogs/components/header_dialogs.dart';
-import 'package:megga_posto_mobile/utils/static/custom_colors.dart';
+import 'package:megga_posto_mobile/model/estoque_produto.dart';
+import 'package:megga_posto_mobile/page/management/pages/components/custom_buttons_dialog.dart';
+import 'package:megga_posto_mobile/page/management/pages/components/header_dialogs.dart';
+import 'package:megga_posto_mobile/page/management/pages/estoque/components/build_card_estoque.dart';
+import 'package:megga_posto_mobile/page/management/pages/estoque/components/build_legend.dart';
+import 'package:megga_posto_mobile/utils/dependencies.dart';
 
-class ReportDialog extends StatelessWidget {
-  final String textHeader;
+import '../../../../utils/static/custom_colors.dart';
+
+class ProdutoEstoquePage extends StatelessWidget {
   final Function() function;
-  const ReportDialog({
+  const ProdutoEstoquePage({
     Key? key,
-    required this.textHeader,
     required this.function,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final _customButtons = CustomButtonsDialog.instance;
+    final _managementController = Dependencies.managementController();
 
     Widget _buildHeader() {
-      return HeaderDialogs(title: textHeader);
+      return const HeaderDialogs(title: 'Estoque de Produtos');
+    }
+
+    Widget _buildLegend() {
+      return const BuildLegend();
+    }
+
+    Widget _buildDivider() {
+      return const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Divider(),
+      );
     }
 
     Widget _buildContent() {
-      return const SizedBox(child: Center(child: Text('Imagem do pdf')));
+      return ListView.builder(
+        itemCount: _managementController.listEstoque.length,
+        itemBuilder: (context, index) {
+          EstoqueProduto estoqueProduto =
+              _managementController.listEstoque[index];
+          return BuildCardEstoque(
+            estoqueProdutoSelected: estoqueProduto,
+          );
+        },
+      );
     }
 
     Widget _buildButtonBack() {
@@ -50,6 +74,8 @@ class ReportDialog extends StatelessWidget {
       return Column(
         children: [
           _buildHeader(),
+          _buildLegend(),
+          _buildDivider(),
           Expanded(child: _buildContent()),
           _buildLineButtons(),
         ],

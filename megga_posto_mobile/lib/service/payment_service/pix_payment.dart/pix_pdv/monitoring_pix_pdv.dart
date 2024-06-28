@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/page/payment/enum/modalidade_payment.dart';
-import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pix_pdv/isolate_pix_pdv_manager.dart';
+import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/common/isolate_pix_manager.dart';
 import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pix_pdv/logic/response_conditions.dart';
 import 'package:megga_posto_mobile/utils/method_quantity_back.dart';
 import 'package:megga_posto_mobile/utils/methods/bill/bill_features.dart';
@@ -17,7 +17,7 @@ import '../../../../repositories/isar_db/data_pix/insert_data_pix.dart';
 import '../../../execute_sell/execute_sell.dart';
 
 class MonitoringPixPdv {
-  final isolatePixPdvManager = IsolatePixPdvManager.instance;
+  final isolatePixPdvManager = IsolatePixManager.instance;
   late QrDinamicoResult _qrdinamico;
 
   Future<void> isolateMonitoring(
@@ -110,7 +110,7 @@ class MonitoringPixPdv {
     final _paymentGet = PaymentGet();
     final _paymentFeatures = PaymentFeatures();
     await InsertDataPix().insert(_paymentGet.getEnteredValue(), _qrdinamico);
-    if (_paymentGet.getRemainingValue() == 0 || //TODO teste modificado de get aqui
+    if (_paymentGet.getRemainingValue() == 0 ||
         _paymentGet.getRemainingValue() < 0) {
       QuantityBack.back(6);
       _executeFinally();

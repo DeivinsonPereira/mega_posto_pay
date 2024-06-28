@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pix_pdv/isolate_pix_pdv_manager.dart';
+import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/common/isolate_pix_manager.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
 import 'package:pixpdv_sdk/pixpdv_sdk.dart';
 
@@ -32,11 +32,11 @@ class PixPdvPaymentDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _pixPdv = PixPdv();
-    final isolatePixPdvManager = IsolatePixPdvManager.instance;
+    final isolatePixPdvManager = IsolatePixManager.instance;
     final _paymentFeatures = PaymentFeatures();
     double sizeTextButtom = Get.size.height * 0.03;
 
-    _pixPdv.isolateMonitoring(context, qrdinamico, sdk);
+    _pixPdv.isolateMonitoring(context, qrdinamico: qrdinamico, sdk: sdk);
 
     //Constrói a imagem do QrCode
     Widget _buildImageQrCode() {
@@ -54,7 +54,7 @@ class PixPdvPaymentDialog extends StatelessWidget {
     }
 
     // Constrói o botão de voltar
-    Widget _buildButonBack() {
+    Widget _buildButtonBack() {
       return SizedBox(
         height: 40,
         child: CustomElevatedButton(
@@ -77,7 +77,7 @@ class PixPdvPaymentDialog extends StatelessWidget {
         child: CustomElevatedButton(
             text: 'Imprimir',
             textStyle: CustomTextStyles.whiteBoldStyle(sizeTextButtom),
-            function: () async => await ExecutePrint.instance
+            function: () async => await ExecutePrint()
                 .printQrCodeAndText(textPix, DateTime.now(), context),
             radious: 0,
             colorButton: CustomColors.confirmButton),
@@ -88,7 +88,7 @@ class PixPdvPaymentDialog extends StatelessWidget {
     Widget _buildButonBackAndPrint() {
       return Row(children: [
         Expanded(
-          child: _buildButonBack(),
+          child: _buildButtonBack(),
         ),
         Expanded(
           child: _buildButonPrint(),

@@ -56,15 +56,9 @@ class ExecuteSell implements IExecuteSell {
 
       if (_paymentController.assignaturePng.isNotEmpty ||
           _paymentController.assignaturePng != Uint8List(0)) {
-        request.files.add(http.MultipartFile.fromBytes(
-          'x-assinatura',
-          _paymentController.assignaturePng,
-          filename: 'assignature.png',
-          contentType: http.MultipartFile.fromBytes(
-                  'assignature.png', _paymentController.assignaturePng,
-                  filename: 'assignature.png')
-              .contentType,
-        ));
+        final base64Image = base64Encode(_paymentController.assignaturePng);
+
+        request.fields['x-assinatura'] = base64Image;
       }
 
       var streamedResponse = await _ioClient.send(request);

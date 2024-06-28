@@ -19,8 +19,9 @@ class PixPdv implements IPixPdv {
 
   // Cria uma nova isolate e fica buscando o status do pagamento
   @override
-  Future<void> isolateMonitoring(
-      BuildContext context, QrDinamicoResult qrdinamico, PixPdvSdk sdk) async {
+  Future<void> isolateMonitoring(BuildContext context,
+      {QrDinamicoResult? qrdinamico, PixPdvSdk? sdk, String? hash}) async {
+    if (qrdinamico == null || sdk == null) return;
     _monitoring.isolateMonitoring(context, qrdinamico, sdk);
   }
 }

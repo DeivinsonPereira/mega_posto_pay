@@ -7,12 +7,14 @@ class CustomCardHomePage extends StatelessWidget {
   final Text title;
   final IconData icon;
   final Function() function;
-  const CustomCardHomePage({
+  bool? isManagement;
+  CustomCardHomePage({
     super.key,
     required this.color,
     required this.title,
     required this.icon,
     required this.function,
+    this.isManagement = false,
   });
 
   @override
@@ -30,7 +32,9 @@ class CustomCardHomePage extends StatelessWidget {
               child: Icon(
                 icon,
                 color: Colors.white,
-                size: Get.size.width * 0.3,
+                size: isManagement!
+                    ? Get.size.width * 0.15
+                    : Get.size.width * 0.3,
               ),
             ),
             title,

@@ -40,7 +40,6 @@ void main() async {
   // TODO fazer suprimento
   // TODO imprimir sangria, suprimento
   // TODO criar tela relatorio do caixa com a opção de imprimir
-  // TODO criar monitoramento
-
+  
   runApp(const AppWidget());
 }

@@ -5,6 +5,6 @@ abstract class IConfigFeatures {
   Future<void> setSerialDevice(String serial);
   Future<void> setDataPos(DataPos dataPos);
   Future<void> setCredential(Credentials credential);
-  Future<void> updateIdUsuario(int idUser);
+  Future<void> updateIdUsuarioAndName(int idUser, String name);
   Future<void> updateIpServidor();
 }

@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, use_super_parameters, must_be_immutable
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:megga_posto_mobile/utils/format_txt.dart';
 import 'package:megga_posto_mobile/utils/static/custom_colors.dart';
 
 import 'package:megga_posto_mobile/controller/text_field_controller.dart';
@@ -13,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final IconData icon;
   final double radious;
   final Color colorContent;
+  bool? isNumber;
   bool? isFilled;
   Color? filledColor;
   bool? isSecret;
@@ -25,6 +28,7 @@ class CustomTextField extends StatelessWidget {
       required this.icon,
       required this.radious,
       required this.colorContent,
+      this.isNumber = false,
       this.isFilled = false,
       this.filledColor = CustomColors.fillTextFieldColor,
       this.isSecret = false,
@@ -38,6 +42,11 @@ class CustomTextField extends StatelessWidget {
     return GetBuilder<TextFieldController>(builder: (textFieldController) {
       return TextFormField(
         style: TextStyle(color: textColor!),
+        keyboardType:
+            isNumber == false ? TextInputType.text : TextInputType.number,
+        inputFormatters: isNumber == false
+            ? []
+            : [FilteringTextInputFormatter.digitsOnly, NumberBrl()],
         obscureText:
             isSecret! == false ? false : textFieldController.isObscure.value,
         controller: controller,

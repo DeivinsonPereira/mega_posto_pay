@@ -11,7 +11,7 @@ class ManagementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _listIconsManagement = ListIconsManagement.instance;
+    final _listIconsManagement = ListIconsManagement();
 
     // Constrói os Cards
     Widget _buildCard(int index) {
@@ -20,6 +20,7 @@ class ManagementPage extends StatelessWidget {
         icon: _listIconsManagement.listToCard[index].icon,
         title: _listIconsManagement.listToCard[index].title,
         function: _listIconsManagement.listToCard[index].function,
+        isManagement: true,
       );
     }
 
@@ -29,7 +30,7 @@ class ManagementPage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+            crossAxisCount: 3,
             crossAxisSpacing: 5,
             mainAxisSpacing: 5,
           ),

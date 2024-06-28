@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_final_fields
 
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class PaymentController extends GetxController {
 
   bool isAutoFilled = true;
 
-  String hashPix = '';
-  String qrCodePenseBankPix = '';
+  Timer? timerIsolate;
+
+  Timer? timerButton;
 }

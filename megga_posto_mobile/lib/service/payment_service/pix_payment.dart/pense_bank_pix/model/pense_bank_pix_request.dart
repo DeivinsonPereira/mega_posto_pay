@@ -6,15 +6,13 @@ class PenseBankPixRequest {
   double totalAmount;
   int expirationSeconds;
   String cnpjSh;
-  
+
   PenseBankPixRequest({
-    required this.alias ,
+    required this.alias,
     required this.totalAmount,
     this.expirationSeconds = 300,
     this.cnpjSh = '04336126000192',
   });
-
-
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -36,5 +34,6 @@ class PenseBankPixRequest {
 
   String toJson() => json.encode(toMap());
 
-  factory PenseBankPixRequest.fromJson(String source) => PenseBankPixRequest.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory PenseBankPixRequest.fromJson(String source) =>
+      PenseBankPixRequest.fromMap(json.decode(source) as Map<String, dynamic>);
 }

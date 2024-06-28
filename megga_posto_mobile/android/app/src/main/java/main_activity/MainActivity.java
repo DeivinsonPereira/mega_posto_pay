@@ -301,6 +301,9 @@ public class MainActivity extends FlutterActivity {
                                         case "printNfce":
                                             printNfce(call.argument("text1"), call.argument("text2"), call.argument("text3"), call.argument("qrCode"), call.argument("text4"));
                                             break;
+                                        case "printCashRegister":
+                                            printCashRegister(call.argument("text1"), call.argument("text2"), call.argument("text3")); 
+                                            break;    
                                     }
                                 }
                             } catch (Exception e) {
@@ -318,6 +321,33 @@ public class MainActivity extends FlutterActivity {
 
                     }
                 });
+    }
+
+    private void printCashRegister(String text1, String text2, String text3){
+        try{
+            String statusImpressora = gertecPrinter.getStatusImpressora();
+            if (!gertecPrinter.isImpressoraOK()) {
+                Log.e("printPixQrCode", "Status da impressora não é OK: " + statusImpressora);
+                _result.error("IMPRESSORA_NAO_OK", "Status da impressora: " + statusImpressora, null);
+                return;
+            }
+            configPrint.setAlinhamento("CENTER");
+            configPrint.setTamanho(20);
+            gertecPrinter.setConfigImpressao(configPrint);
+            gertecPrinter.imprimeTexto(text1);
+            gertecPrinter.avancaLinha(10);
+            gertecPrinter.imprimeTexto(text2);
+            gertecPrinter.avancaLinha(10);
+            gertecPrinter.imprimeTexto(text3);
+            gertecPrinter.avancaLinha(10);
+            gertecPrinter.avancaLinha(40);
+
+            _result.success("Impressão realizada com sucesso");
+
+        } catch (Exception e) {
+            Log.e("printPixQrCode", "Erro de impressão: " + e.getMessage());
+            _result.error("ERRO_IMPRESSAO", "Erro ao imprimir: " + e.getMessage(), null);
+        }
     }
 
     private void printNfce(String text1, String text2, String text3, String qrCode, String text4){

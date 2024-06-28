@@ -3,23 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:megga_posto_mobile/common/custom_dropbox.dart';
+import 'package:megga_posto_mobile/common/custom_text_field.dart';
 import 'package:megga_posto_mobile/common/custom_text_field_five_lines.dart';
 import 'package:megga_posto_mobile/common/custom_text_style.dart';
 import 'package:megga_posto_mobile/model/moviment_register_model.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
+import 'package:megga_posto_mobile/utils/format_numbers.dart';
 import 'package:megga_posto_mobile/utils/methods/management/management_features.dart';
 import 'package:megga_posto_mobile/utils/static/custom_colors.dart';
 
 import '../components/custom_buttons_dialog.dart';
 import '../components/header_dialogs.dart';
 
-class CashMovimentDialog extends StatelessWidget {
+class CashMovimentPage extends StatelessWidget {
   final Function() function;
   final String textHeader;
-  const CashMovimentDialog({
+  bool? isSupplyCash;
+  CashMovimentPage({
     Key? key,
     required this.function,
     required this.textHeader,
+    this.isSupplyCash = false,
   }) : super(key: key);
 
   @override
@@ -27,6 +31,8 @@ class CashMovimentDialog extends StatelessWidget {
     final _managementController = Dependencies.managementController();
     final _managementFeatures = ManagementFeatures.instance;
     final _customButtons = CustomButtonsDialog.instance;
+
+    _managementFeatures.updateValue();
 
     Widget _buildHeader() {
       return HeaderDialogs(
@@ -37,10 +43,11 @@ class CashMovimentDialog extends StatelessWidget {
     Widget _buildTotalValue() {
       return SizedBox(
         height: 60,
-        child: Align(
+        child: Obx(() => Align(
             alignment: Alignment.bottomCenter,
-            child: Text('SALDO: R\$ 0,00',
-                style: CustomTextStyles.blackBoldStyle(24))),
+            child: Text(
+                'SALDO: R\$ ${FormatNumbers.formatNumbertoString(_managementController.valor.value)}',
+                style: CustomTextStyles.blackBoldStyle(24)))),
       );
     }
 
@@ -53,8 +60,10 @@ class CashMovimentDialog extends StatelessWidget {
         value: _managementController.docto,
         items: _managementController.listDocto,
         sizeDropbox: Get.size.width * 0.78,
-        onChanged: (Docto newValue) =>
-            _managementFeatures.updateDocto(newValue),
+        onChanged: (Docto newValue) {
+          _managementFeatures.updateDocto(newValue);
+          _managementFeatures.updateValue();
+        },
         displayValue: (Docto newValue) => newValue.descricao,
       );
     }
@@ -70,6 +79,17 @@ class CashMovimentDialog extends StatelessWidget {
           textHint: 'HISTÓRICO');
     }
 
+    Widget _buildTextFieldValue() {
+      return CustomTextField(
+          textColor: Colors.black,
+          isNumber: true,
+          text: '0,00',
+          controller: _managementController.valorController,
+          icon: Icons.monetization_on,
+          radious: 10,
+          colorContent: Colors.black);
+    }
+
     Widget _buildContent() {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -77,24 +97,28 @@ class CashMovimentDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildLegendDocto(),
-            _buildDropboxDocumento(),
-            const SizedBox(height: 20),
+            if (!isSupplyCash!) ...{
+              _buildLegendDocto(),
+              _buildDropboxDocumento(),
+              const SizedBox(height: 20),
+            },
             _buildLegendHistorico(),
             _buildTextFieldHistorico(),
+            SizedBox(height: Get.size.height * 0.07),
+            _buildTextFieldValue(),
           ],
         ),
       );
     }
 
     Widget _buildButtonBack() {
-      return _customButtons.buildButton(
-          'VOLTAR', CustomColors.backButton, () => Get.back());
+      return _customButtons.buildButton('VOLTAR', CustomColors.backButton,
+          () => {Get.back(), _managementFeatures.resetValues()});
     }
 
     Widget _buildContinue() {
       return _customButtons.buildButton(
-          'SALVAR', CustomColors.confirmButton, () => function());
+          'SALVAR', CustomColors.confirmButton, function);
     }
 
     Widget _buildLineButtons() {
@@ -107,29 +131,23 @@ class CashMovimentDialog extends StatelessWidget {
     }
 
     Widget _buildBody() {
-      return Column(
-        children: [
-          _buildHeader(),
-          _buildTotalValue(),
-          Expanded(child: _buildContent()),
-          _buildLineButtons(),
-        ],
+      return SizedBox(
+        height: Get.size.height,
+        width: Get.size.width,
+        child: Column(
+          children: [
+            _buildHeader(),
+            if (!isSupplyCash!) _buildTotalValue(),
+            Expanded(child: _buildContent()),
+            _buildLineButtons(),
+          ],
+        ),
       );
     }
 
-    return SingleChildScrollView(
-      child: Dialog(
-        insetPadding: EdgeInsets.zero,
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(0),
-        ),
-        child: SizedBox(
-          height: Get.size.height * 0.8,
-          width: Get.size.width * 0.9,
-          child: _buildBody(),
-        ),
-      ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(child: _buildBody()),
     );
   }
 }
