@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:megga_posto_mobile/model/estoque_produto.dart';
 import 'package:megga_posto_mobile/model/list_reimpressao.dart';
@@ -5,6 +6,7 @@ import 'package:megga_posto_mobile/model/moviment_register_model.dart';
 import 'package:megga_posto_mobile/model/reimpressao_cupom.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 
+import '../../../model/resumo_financeiro.dart';
 import '../../../service/register_moviment/return_document_sold.dart';
 
 class ManagementFeatures {
@@ -55,6 +57,35 @@ class ManagementFeatures {
         _managementController.listReimpressao[index];
     _managementController.idReimpressaoSelected.value = index;
     _managementController.update();
+  }
+
+  void updateResumoFinanceiro(List<ResumoFinanceiro> result) {
+    List<String> pagamentos = [
+      'DINHEIRO',
+      'CARTAO CREDITO',
+      'CARTAO DEBITO',
+      'NOTA',
+      'PIX',
+    ];
+
+    List<ResumoFinanceiro> resumoFinanceiro = [];
+    for (var i = 0; i < pagamentos.length; i++) {
+      ResumoFinanceiro? resumo =
+          result.where((element) => element.nome == pagamentos[i]).firstOrNull;
+      if (resumo != null) {
+        resumoFinanceiro.add(resumo);
+        continue;
+      }
+
+      resumo = ResumoFinanceiro(
+        nome: pagamentos[i],
+        valor: 0,
+      );
+
+      resumoFinanceiro.add(resumo);
+    }
+
+    _managementController.listResumoFinanceiro.assignAll(resumoFinanceiro);
   }
 
   void resetValues() {

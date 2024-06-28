@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:megga_posto_mobile/model/estoque_produto.dart';
 import 'package:megga_posto_mobile/model/reimpressao_cupom.dart';
 import 'package:megga_posto_mobile/model/resumo_financeiro.dart';
+import 'package:pixpdv_sdk/pixpdv_sdk.dart';
 
 import '../model/list_reimpressao.dart';
 import '../model/moviment_register_model.dart';

@@ -6,7 +6,9 @@ import 'package:megga_posto_mobile/repositories/http/search_reimpressao.dart';
 import 'package:megga_posto_mobile/service/print/common/custom_header_print.dart';
 import 'package:megga_posto_mobile/utils/date_time_formatter.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
+import 'package:megga_posto_mobile/utils/format_numbers.dart';
 import 'package:megga_posto_mobile/utils/format_string.dart';
+import 'package:megga_posto_mobile/utils/methods/management/management_get.dart';
 
 import '../../utils/utilPdfBmp.dart';
 import 'execute_print.dart';
@@ -39,14 +41,22 @@ class PrintManagement {
     text2 += spaceMinus;
 
     String text3 = '';
-    for (var item in _managementController.listEstoque) {
-      int sizeName =
-          27 - FormatString.maxLengthText(item.nomeProduto, 24).length;
-      int sizeQtd = 5 - item.estoqueQuantidadeFisico.toString().length;
+    //for (var item in _managementController.listEstoque) {
+
+    for (var i = 0; i < _managementController.listEstoque.length; i++) {
+      int sizeName = 27 -
+          FormatString.maxLengthText(
+                  _managementController.listEstoque[i].nomeProduto, 24)
+              .length;
+      int sizeQtd = 5 -
+          _managementController.listEstoque[i].estoqueQuantidadeFisico
+              .toString()
+              .length;
 
       text3 +=
-          '${FormatString.maxLengthText(item.nomeProduto, 24)}${''.padRight(sizeName)}${''.padLeft(sizeQtd)}${item.estoqueQuantidadeFisico}_______\n';
+          '${FormatString.maxLengthText(_managementController.listEstoque[i].nomeProduto, 24)}${''.padRight(sizeName)}${''.padLeft(sizeQtd)}${_managementController.listEstoque[i].estoqueQuantidadeFisico}_______\n';
     }
+
     text3 += '\n\n\n\n\n\n\n\n\n\n';
 
     if (kDebugMode) {
@@ -133,10 +143,17 @@ class PrintManagement {
 
     String text3 = '';
     for (var item in _managementController.listResumoFinanceiro) {
+      int sizeName = 18 - item.nome!.length;
+      int sizeValue = 6 - (item.valor ?? 0.0).toString().length;
+
       text3 +=
-          '${item.data ?? ''}${''.padRight(24 - (item.data ?? '').length)} - ${''.padLeft(6 - (item.valor ?? 0.0).toString().length)}${item.valor.toString()}\n';
+          '${item.nome ?? ''}${''.padRight(sizeName)} ${''.padLeft(sizeValue)}${'R\$${FormatNumbers.formatNumbertoString(item.valor)}'}\n';
     }
 
+    text3 += spaceEquals;
+    text3 +=
+        'Total: R\$ ${FormatNumbers.formatNumbertoString(ManagementGet.instance.getTotalValue())}\n';
+    text3 += spaceEquals;
     text3 += '\n\n\n\n\n\n\n\n\n\n';
     if (kDebugMode) {
       print(text1);

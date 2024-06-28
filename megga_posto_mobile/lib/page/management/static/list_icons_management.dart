@@ -14,8 +14,10 @@ import 'package:megga_posto_mobile/service/print/print_management.dart';
 import 'package:megga_posto_mobile/service/register_moviment/record_cash_withdrawal.dart';
 import 'package:megga_posto_mobile/service/register_moviment/record_expense.dart';
 import 'package:megga_posto_mobile/service/register_moviment/record_salary_advance.dart';
+import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/methods/management/management_features.dart';
 
+import '../../../service/register_moviment/return_resumo_financeiro.dart';
 import '../pages/estoque/produto_estoque_page.dart';
 
 class ListIconsManagement {
@@ -145,14 +147,20 @@ class ListIconsManagement {
       icon: FontAwesomeIcons.layerGroup,
       title: Text('Resumo Fin.', style: CustomTextStyles.whiteBoldStyle(14)),
       function: () async {
-        Get.dialog(
-          barrierDismissible: false,
-          ReportPage(
-            function: () {
-              PrintManagement().relatorio();
-            },
-          ),
-        );
+        final _managementController = Dependencies.managementController();
+        Get.dialog(const LoadingPage());
+        await ReturnResumoFinanceiro().returnResumoFinanceiro();
+        Get.back();
+        if (_managementController.listResumoFinanceiro.isNotEmpty) {
+          Get.dialog(
+            barrierDismissible: false,
+            ReportPage(
+              function: () {
+                PrintManagement().relatorio();
+              },
+            ),
+          );
+        }
       },
     ),
   ];
