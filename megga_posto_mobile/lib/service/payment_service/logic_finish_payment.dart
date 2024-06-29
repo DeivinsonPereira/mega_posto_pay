@@ -11,6 +11,7 @@ import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import '../../utils/is_remaining_value.dart';
 import '../../utils/methods/bill/bill_features.dart';
+import '../update_supply_pump.dart';
 
 class LogicFinishPayment {
   final _isRemainingValue = IsRemainingValue();
@@ -58,6 +59,7 @@ class LogicFinishPayment {
           .show(Get.context!);
 
       QuantityBack.back(8);
+      UpdateSupplyPump().updateSupplyPump();
       _billFeatures.clearAll();
       return;
     });

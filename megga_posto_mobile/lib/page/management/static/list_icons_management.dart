@@ -5,19 +5,25 @@ import 'package:megga_posto_mobile/common/custom_text_style.dart';
 import 'package:megga_posto_mobile/model/management_model.dart';
 import 'package:megga_posto_mobile/page/loading/loading_page.dart';
 import 'package:megga_posto_mobile/page/management/logic/logic_buttons_management.dart';
+import 'package:megga_posto_mobile/page/management/pages/cancelamento/cancelamento_page.dart';
+import 'package:megga_posto_mobile/page/management/pages/cancelamento/confirm_cancelamento_dialog.dart';
 import 'package:megga_posto_mobile/page/management/pages/cash_moviment/cash_moviment_page.dart';
+import 'package:megga_posto_mobile/page/management/pages/produto_vendido/produto_vendido_page.dart';
 import 'package:megga_posto_mobile/page/management/pages/report/report_page.dart';
 import 'package:megga_posto_mobile/page/management/pages/report/reprint_sell_page.dart';
 import 'package:megga_posto_mobile/repositories/http/seach_estoque_produto.dart';
 import 'package:megga_posto_mobile/repositories/http/search_reimpressao_list.dart';
+import 'package:megga_posto_mobile/service/management_requests/search_list_cancelamento.dart';
 import 'package:megga_posto_mobile/service/print/print_management.dart';
-import 'package:megga_posto_mobile/service/register_moviment/record_cash_withdrawal.dart';
-import 'package:megga_posto_mobile/service/register_moviment/record_expense.dart';
-import 'package:megga_posto_mobile/service/register_moviment/record_salary_advance.dart';
+import 'package:megga_posto_mobile/service/management_requests/record_cash_supply.dart';
+import 'package:megga_posto_mobile/service/management_requests/record_cash_withdrawal.dart';
+import 'package:megga_posto_mobile/service/management_requests/record_expense.dart';
+import 'package:megga_posto_mobile/service/management_requests/record_salary_advance.dart';
+import 'package:megga_posto_mobile/service/management_requests/search_produto_vendido.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/methods/management/management_features.dart';
 
-import '../../../service/register_moviment/return_resumo_financeiro.dart';
+import '../../../service/management_requests/return_resumo_financeiro.dart';
 import '../pages/estoque/produto_estoque_page.dart';
 
 class ListIconsManagement {
@@ -36,6 +42,7 @@ class ListIconsManagement {
                   await RecordCashWithdrawal().record();
                   await PrintManagement().withdrawalPrint('SANGRIA').then(
                       (element) => ManagementFeatures.instance.resetValues());
+                  Get.back();
                 });
               },
               textHeader: 'SANGRIA - PISTA'),
@@ -58,6 +65,7 @@ class ListIconsManagement {
                   await RecordExpense().record();
                   await PrintManagement().withdrawalPrint('DESPESA').then(
                       (element) => ManagementFeatures.instance.resetValues());
+                  Get.back();
                 });
               },
             ));
@@ -78,6 +86,7 @@ class ListIconsManagement {
                 await RecordSalaryAdvance().record();
                 await PrintManagement().withdrawalPrint('VALE').then(
                     (element) => ManagementFeatures.instance.resetValues());
+                Get.back();
               });
             },
           ),
@@ -92,11 +101,12 @@ class ListIconsManagement {
         Get.to(
           () => CashMovimentPage(
             function: () async {
-              // Get.dialog(const LoadingPage());
-              // await RecordCashSupply().record();
+              Get.dialog(const LoadingPage());
+              await RecordCashSupply().record();
               await PrintManagement()
                   .supplyCash()
                   .then((element) => ManagementFeatures.instance.resetValues());
+              Get.back();
             },
             textHeader: 'SUPRIMENTO - PISTA',
             isSupplyCash: true,
@@ -109,18 +119,22 @@ class ListIconsManagement {
       icon: FontAwesomeIcons.moneyBillTrendUp,
       title: Text('Vendas', style: CustomTextStyles.whiteBoldStyle(14)),
       function: () async {
+        final _managementController = Dependencies.managementController();
         Get.dialog(const LoadingPage());
         await SearchReimpressaoList.instance.search();
         Get.back();
 
-        Get.to(
-          () => ReprintSellPage(
-            textHeader: 'VENDAS',
-            function: () {
-              PrintManagement().reprintCupom();
-            },
-          ),
-        );
+        if (_managementController.listReimpressao.isNotEmpty) {
+          Get.to(
+            () => ReprintSellPage(
+              textHeader: 'VENDAS',
+              function: () {
+                PrintManagement().reprintCupom();
+                Get.back();
+              },
+            ),
+          );
+        }
       },
     ),
     ManagementModel(
@@ -128,18 +142,22 @@ class ListIconsManagement {
       icon: FontAwesomeIcons.layerGroup,
       title: Text('Estoque', style: CustomTextStyles.whiteBoldStyle(14)),
       function: () async {
+        final _managementController = Dependencies.managementController();
         Get.dialog(const LoadingPage());
         await SeachEstoqueProduto.instance.search();
         Get.back();
 
-        Get.dialog(
-          barrierDismissible: false,
-          ProdutoEstoquePage(
-            function: () {
-              PrintManagement().printStock();
-            },
-          ),
-        );
+        if (_managementController.listEstoque.isNotEmpty) {
+          Get.dialog(
+            barrierDismissible: false,
+            ProdutoEstoquePage(
+              function: () {
+                PrintManagement().printStock();
+                Get.back();
+              },
+            ),
+          );
+        }
       },
     ),
     ManagementModel(
@@ -150,15 +168,56 @@ class ListIconsManagement {
         final _managementController = Dependencies.managementController();
         Get.dialog(const LoadingPage());
         await ReturnResumoFinanceiro().returnResumoFinanceiro();
-        Get.back();
+
         if (_managementController.listResumoFinanceiro.isNotEmpty) {
           Get.dialog(
             barrierDismissible: false,
             ReportPage(
               function: () {
                 PrintManagement().relatorio();
+                Get.back();
               },
             ),
+          );
+        }
+      },
+    ),
+    ManagementModel(
+      color: const Color.fromARGB(255, 101, 86, 3),
+      icon: FontAwesomeIcons.layerGroup,
+      title: Text('Pro. Vendido', style: CustomTextStyles.whiteBoldStyle(14)),
+      function: () async {
+        final _managementController = Dependencies.managementController();
+        Get.dialog(const LoadingPage());
+        await SearchProdutoVendido().search();
+
+        if (_managementController.listProdutosVendidos.isNotEmpty) {
+          Get.dialog(
+            barrierDismissible: false,
+            ProdutoVendidoPage(function: () {
+              PrintManagement().printProdutoVendido();
+              Get.back();
+            }),
+          );
+        }
+      },
+    ),
+    ManagementModel(
+      color: const Color.fromARGB(255, 3, 101, 36),
+      icon: FontAwesomeIcons.layerGroup,
+      title: Text('Cancelamento', style: CustomTextStyles.whiteBoldStyle(14)),
+      function: () async {
+        final _managementController = Dependencies.managementController();
+        Get.dialog(const LoadingPage());
+        await SearchListCancelamento().search();
+        Get.back();
+
+        if (_managementController.listCancelamento.isNotEmpty) {
+          Get.to(
+            () => CancelamentoPage(function: () {
+              Get.dialog(const ConfirmCancelamentoDialog(),
+                  barrierDismissible: false);
+            }),
           );
         }
       },

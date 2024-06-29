@@ -33,6 +33,7 @@ class SupplyFeatures implements ISupplyFeatures {
     if (supplyPump.isEmpty) return false;
     _supplyController.supplySelectedPumpList.addAll(supplyPump);
     _supplyController.update();
+    _supplyController.supplySelectedPumpList.refresh();
     return true;
   }
 

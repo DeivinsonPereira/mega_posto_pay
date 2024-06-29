@@ -23,6 +23,7 @@ class ExecuteSell implements IExecuteSell {
   final _billController = Dependencies.billController();
   final _paymentController = Dependencies.paymentController();
   final _configController = Dependencies.configController();
+  final _cameraPhotoController = Dependencies.cameraPhotoController();
 
   final _ioClient = SingletonsInstances().ioClient;
   final _booleanMethods = SingletonsInstances().booleanMethods;
@@ -56,9 +57,13 @@ class ExecuteSell implements IExecuteSell {
 
       if (_paymentController.assignaturePng.isNotEmpty ||
           _paymentController.assignaturePng != Uint8List(0)) {
-        final base64Image = base64Encode(_paymentController.assignaturePng);
+        request.fields['x-assinatura'] =
+            base64Encode(_paymentController.assignaturePng);
+      }
 
-        request.fields['x-assinatura'] = base64Image;
+      if (_cameraPhotoController.imageFile.value != null) {
+        request.fields['x-foto'] = base64Encode(
+            await _cameraPhotoController.imageFile.value!.readAsBytes());
       }
 
       var streamedResponse = await _ioClient.send(request);

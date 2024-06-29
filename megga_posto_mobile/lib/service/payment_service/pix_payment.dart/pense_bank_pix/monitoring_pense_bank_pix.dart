@@ -4,9 +4,9 @@ import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/model/payment_pix_model.dart';
-import 'package:megga_posto_mobile/page/payment/enum/modalidade_payment.dart';
 import 'package:megga_posto_mobile/service/execute_sell/execute_sell.dart';
 import 'package:megga_posto_mobile/service/payment_service/logic_finish_payment.dart';
 import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/common/isolate_pix_manager.dart';
@@ -73,9 +73,6 @@ class MonitoringPenseBankPix {
   }
 
   void _handleApproved(BuildContext context, String hash) {
-    final paymentFeatures = PaymentFeatures();
-
-    paymentFeatures.addSelectedPayment(ModalidadePaymment.PIX);
     const CustomCherrySuccess(message: 'Pagamento efetuado com sucesso!')
         .show(context);
     _quantityBack(hash);
@@ -92,7 +89,7 @@ class MonitoringPenseBankPix {
 
     LogicFinishPayment().confirmPayment('PX', dadosPix: dadosPix);
 
-    //QuantityBack.back(3);
+    Get.back();
     //_paymentFeatures.clearEnteredValue();
   }
 

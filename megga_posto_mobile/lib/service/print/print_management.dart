@@ -25,9 +25,6 @@ class PrintManagement {
   String hora = DatetimeFormatter.formatHour(DateTime.now());
 
   Future<void> printStock() async {
-    String data = DatetimeFormatter.formatDate(DateTime.now());
-    String hora = DatetimeFormatter.formatHour(DateTime.now());
-
     String text1 = _customHaderPrint.getHeader();
 
     String text2 = spaceEquals;
@@ -55,6 +52,49 @@ class PrintManagement {
 
       text3 +=
           '${FormatString.maxLengthText(_managementController.listEstoque[i].nomeProduto, 24)}${''.padRight(sizeName)}${''.padLeft(sizeQtd)}${_managementController.listEstoque[i].estoqueQuantidadeFisico}_______\n';
+    }
+
+    text3 += '\n\n\n\n\n\n\n\n\n\n';
+
+    if (kDebugMode) {
+      print(text1);
+      print(text2);
+      print(text3);
+    }
+
+    ExecutePrint().printTextCashRegister(text1, text2, text3, Get.context!);
+  }
+
+  Future<void> printProdutoVendido() async {
+    String text1 = _customHaderPrint.getHeader();
+
+    String text2 = spaceEquals;
+    text2 += 'COMPROVANTE - ESTOQUE\n';
+    text2 += 'Data: $data - Hora: $hora\n';
+    text2 += spaceEquals;
+    text2 += 'LISTAGEM DO ESTOQUE/CONFERENCIA\n';
+    text2 += spaceMinus;
+
+    text2 += 'PRODUTO   | ESTOQUE |    | CONTAGEM |\n';
+    text2 += spaceMinus;
+
+    String text3 = '';
+    //for (var item in _managementController.listEstoque) {
+
+    for (var i = 0;
+        i < _managementController.listProdutosVendidos.length;
+        i++) {
+      int sizeName = 27 -
+          FormatString.maxLengthText(
+                  _managementController.listProdutosVendidos[i].nome ?? '', 24)
+              .length;
+      int sizeQtd = 10 -
+          _managementController.listProdutosVendidos[i].quantidade
+              .toString()
+              .length;
+
+      text3 +=
+          '${FormatString.maxLengthText(_managementController.listProdutosVendidos[i].nome ?? '', 24)}${''.padRight(sizeName)}${''.padLeft(sizeQtd)}${_managementController.listProdutosVendidos[i].quantidade}_______\n';
     }
 
     text3 += '\n\n\n\n\n\n\n\n\n\n';
@@ -98,11 +138,12 @@ class PrintManagement {
 
   Future<void> withdrawalPrint(String type) async {
     //SANGRIA, DESPESA, VALE
-    String text1 = _customHaderPrint.getHeader();
-    String text2 = spaceEquals;
-    text2 += 'COMPROVANTE - $type\n';
-    text2 += 'Data: $data - Hora: $hora\n';
-    text2 += spaceMinus;
+    String text1 = spaceEquals;
+    text1 += 'COMPROVANTE - $type\n';
+    text1 += 'Data: $data - Hora: $hora\n';
+    text1 += spaceEquals;
+    String text2 = _customHaderPrint.getHeader();
+    text2 += spaceEquals;
 
     text2 += 'PDV........: ${_configController.dataPos.id}\n';
     text2 += 'CX.........: ${_configController.dataPos.caixaId}\n';
@@ -143,8 +184,9 @@ class PrintManagement {
 
     String text3 = '';
     for (var item in _managementController.listResumoFinanceiro) {
-      int sizeName = 18 - item.nome!.length;
-      int sizeValue = 6 - (item.valor ?? 0.0).toString().length;
+      int sizeName = 16 - item.nome!.length;
+      int sizeValue =
+          12 - FormatNumbers.formatNumbertoString(item.valor ?? 0.0).length;
 
       text3 +=
           '${item.nome ?? ''}${''.padRight(sizeName)} ${''.padLeft(sizeValue)}${'R\$${FormatNumbers.formatNumbertoString(item.valor)}'}\n';

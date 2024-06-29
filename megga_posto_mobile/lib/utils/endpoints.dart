@@ -117,12 +117,24 @@ abstract class Endpoints {
   static String retornaResumoFinanceiro() {
     return '${ip}resumo_financeiro';
   }
-  
+
   static String gravaDespesa() {
     return '${ip}grava_despesa';
   }
-  
+
   static String gravaVale() {
     return '${ip}grava_vale';
+  }
+
+  static String produtoVendido() {
+    return '${ip}produto_vendido';
+  }
+
+  static String retornaListaCancelamento() {
+    return '${ip}retorna_lista_cancelamento';
+  }
+
+  static String cancelaVenda() {
+    return '${ip}cancela_venda';
   }
 }

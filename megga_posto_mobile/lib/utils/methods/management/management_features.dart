@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:megga_posto_mobile/model/estoque_produto.dart';
+import 'package:megga_posto_mobile/model/list_cancelamento_model.dart';
 import 'package:megga_posto_mobile/model/list_reimpressao.dart';
 import 'package:megga_posto_mobile/model/moviment_register_model.dart';
+import 'package:megga_posto_mobile/model/produto_vendido_model.dart';
 import 'package:megga_posto_mobile/model/reimpressao_cupom.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 
 import '../../../model/resumo_financeiro.dart';
-import '../../../service/register_moviment/return_document_sold.dart';
+import '../../../service/management_requests/return_document_sold.dart';
 
 class ManagementFeatures {
   final _managementController = Dependencies.managementController();
@@ -26,6 +27,10 @@ class ManagementFeatures {
 
   void setItemReimpressao(ReimpressaoCupom item) {
     _managementController.itemReimpressao = item;
+  }
+
+  void setListCancelamento(List<ListCancelamentoModel> list) {
+    _managementController.listCancelamento.assignAll(list);
   }
 
   void updateDocto(Docto value) {
@@ -59,6 +64,21 @@ class ManagementFeatures {
     _managementController.update();
   }
 
+  void updateIdCancelamentoSelected(int index) {
+    if (_managementController.idCancelamentoSelected.value == index) {
+      _managementController.idCancelamentoSelected.value = -1;
+
+      _managementController.itemCancelamentoSelected =
+          _managementController.listCancelamento[index];
+      _managementController.update();
+      return;
+    }
+    _managementController.itemCancelamentoSelected =
+        _managementController.listCancelamento[index];
+    _managementController.idCancelamentoSelected.value = index;
+    _managementController.update();
+  }
+
   void updateResumoFinanceiro(List<ResumoFinanceiro> result) {
     List<String> pagamentos = [
       'DINHEIRO',
@@ -88,12 +108,16 @@ class ManagementFeatures {
     _managementController.listResumoFinanceiro.assignAll(resumoFinanceiro);
   }
 
+  void updateListProdutoVendido(List<ProdutoVendidoModel> list) {
+    _managementController.listProdutosVendidos.assignAll(list);
+  }
+
   void resetValues() {
     _managementController.historicoController.text = '';
     _managementController.valorController.text = '';
     _managementController.docto.value = Docto(
-      descricao: 'DEBITO',
-      codigo: 7,
+      descricao: 'DINHEIRO',
+      codigo: 4,
     );
   }
 }

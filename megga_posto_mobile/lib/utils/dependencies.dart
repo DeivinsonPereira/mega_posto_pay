@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:megga_posto_mobile/controller/bill_controller.dart';
+import 'package:megga_posto_mobile/controller/camera_controller.dart';
 import 'package:megga_posto_mobile/controller/config_controller.dart';
 import 'package:megga_posto_mobile/controller/management_controller.dart';
 import 'package:megga_posto_mobile/controller/payment_controller.dart';
@@ -109,6 +110,14 @@ abstract class Dependencies {
       return Get.find<ManagementController>();
     } else {
       return Get.put(ManagementController(), permanent: true);
+    }
+  }
+
+  static CameraPhotoController cameraPhotoController () {
+    if (Get.isRegistered<CameraPhotoController>()) {
+      return Get.find<CameraPhotoController>();
+    } else {
+      return Get.put(CameraPhotoController(), permanent: true);
     }
   }
 }
