@@ -137,4 +137,12 @@ abstract class Endpoints {
   static String cancelaVenda() {
     return '${ip}cancela_venda';
   }
+
+  static String gerarCobrancaPix() {
+    return '${ip}gerar_cobranca_pix';
+  }
+
+  static String consultarPagamentoPix() {
+    return '${ip}consultar_pagamento_pix';
+  }
 }

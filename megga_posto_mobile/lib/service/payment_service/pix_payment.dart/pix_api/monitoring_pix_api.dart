@@ -1,28 +1,26 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/io_client.dart';
 import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/model/payment_pix_model.dart';
-import 'package:megga_posto_mobile/service/execute_sell/execute_sell.dart';
 import 'package:megga_posto_mobile/service/payment_service/logic_finish_payment.dart';
 import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/common/isolate_pix_manager.dart';
-import 'package:megga_posto_mobile/utils/dependencies.dart';
-import 'package:megga_posto_mobile/utils/endpoints.dart';
+import 'package:megga_posto_mobile/utils/auth.dart';
 import 'package:megga_posto_mobile/utils/method_quantity_back.dart';
-import 'package:megga_posto_mobile/utils/methods/bill/bill_features.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
-import 'package:http/http.dart' as http;
 
-class MonitoringPenseBankPix {
+class MonitoringPixApi {
   final _isolatePixManager = IsolatePixManager.instance;
 
-  Future<void> monitoring(BuildContext context, String hash) async {
+  Future<void> monitoring(BuildContext context, String serialDevice,
+      String hash, String endpoint) async {
     final _paymentFeatures = PaymentFeatures();
-    final configController = Dependencies.configController();
     final receivePort = ReceivePort();
     final isolate = await Isolate.spawn(_monitoring, receivePort.sendPort);
 
@@ -33,8 +31,9 @@ class MonitoringPenseBankPix {
         isolate, receivePort, responsePort, sendPort);
 
     final credentials = {
-      "hash": hash,
-      "token": configController.dataPos.credenciaisPix?[0].token
+      'serial': serialDevice,
+      'txid': hash,
+      'endpoint': endpoint,
     };
 
     sendPort.send([responsePort.sendPort, credentials]);
@@ -56,14 +55,15 @@ class MonitoringPenseBankPix {
 
     final args = await receivePort.first as List;
     final responseSendPort = args[0] as SendPort;
-    final hash = args[1]['hash'] as String;
-    final tokenPix = args[1]['token'] as String;
+    final serial = args[1]['serial'] as String;
+    final txid = args[1]['txid'] as String;
+    final endpoint = args[1]['endpoint'] as String;
 
     const timeout = Duration(minutes: 5);
     final endTime = DateTime.now().add(timeout);
 
     while (DateTime.now().isBefore(endTime)) {
-      final result = await _getStatusPix(hash, tokenPix);
+      final result = await _getStatusPix(serial, txid, endpoint);
       responseSendPort.send(result);
 
       await Future.delayed(const Duration(seconds: 10));
@@ -103,32 +103,32 @@ class MonitoringPenseBankPix {
     _isolatePixManager.kill();
   }
 
-  void _executeFinally() {
-    final _paymentFeatures = PaymentFeatures();
-    final _billFeatures = BillFeatures();
-    ExecuteSell().executeSell();
-    _billFeatures.clearAll();
-    _paymentFeatures.clearAll();
-  }
-
   // Monitora o status do pagamento
-  Future<bool> _getStatusPix(String hash, String token) async {
-    Uri uri = Uri.parse(Endpoints.statusPenseBankPix(hash));
+  Future<bool> _getStatusPix(
+      String serial, String txid, String endpoint) async {
+    Uri uri = Uri.parse(endpoint);
 
-    String tokenPix = 'Bearer $token';
-
-    Map<String, String> headerJson = {
-      'Authorization': tokenPix,
+    var requestBody = {
+      'serial': serial,
+      'txid': txid,
     };
+    final HttpClient _client = HttpClient()
+      ..badCertificateCallback =
+          ((X509Certificate cert, String host, int port) => true);
+
+    final IOClient _ioClient = IOClient(_client);
+
     try {
-      var response = await http.get(uri, headers: headerJson);
+      var response = await _ioClient.post(uri,
+          headers: Auth.header, body: jsonEncode(requestBody));
+
       if (response.statusCode == 200) {
         var result = jsonDecode(response.body);
-
+        //TODO implementar
         if (result['success'] == true) {
-          return result['message']['pago'];
+          return result['data']['codigo'] == '1';
         }
-        if (kDebugMode) print('Pago: ${result['message']['pago']}');
+        if (kDebugMode) print('Pago: ${result['message']}');
 
         return false;
       }

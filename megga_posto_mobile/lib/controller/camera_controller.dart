@@ -50,8 +50,10 @@ class CameraPhotoController extends GetxController {
 
   //Limpar camera
   Future<void> clearCamera() async {
-    imageFile.value = null;
-    update();
+    if (Get.isRegistered<CameraPhotoController>()) {
+      imageFile.value = null;
+      update();
+    }
   }
 
   @override

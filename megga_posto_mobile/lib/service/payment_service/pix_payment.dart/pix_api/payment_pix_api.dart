@@ -1,18 +1,16 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/page/payment/pages/pense_bank_dialog.dart';
-import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pense_bank_pix/model/pense_bank_pix_request.dart';
-import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pense_bank_pix/pense_bank_pix.dart';
+import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pix_api/pix_api.dart';
+import 'package:megga_posto_mobile/utils/auth.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/endpoints.dart';
-import 'package:megga_posto_mobile/utils/generate_random_alias.dart';
 import 'package:megga_posto_mobile/utils/singletons_instances.dart';
 
-class PaymentPenseBankPix {
+class PaymentPixApi {
   final _configController = Dependencies.configController();
   final _paymentController = Dependencies.paymentController();
   final _ioClient = SingletonsInstances().ioClient;
@@ -21,27 +19,16 @@ class PaymentPenseBankPix {
 
   Future<void> payment({BuildContext? context}) async {
     try {
-      Uri uri = Uri.parse(Endpoints.penseBankPix('Pix'));
+      Uri uri = Uri.parse(Endpoints.gerarCobrancaPix());
 
-      String tokenPix =
-          'Bearer ${_configController.dataPos.credenciaisPix?[0].token}';
-
-      Map<String, String> headerJson = {
-        'Authorization': tokenPix,
+      Map<String, dynamic> bodyRequest = {
+        'serial': _configController.serialDevice,
+        'valor': _paymentController.enteredValue.value,
       };
 
-      PenseBankPixRequest bodyRequest = PenseBankPixRequest(
-        alias: GenerateRandomAlias().generateUUID(),
-        totalAmount: _paymentController.enteredValue.value,
-        cnpjSh: '04336126000192', // cnpj fixo da softwarehouse
-      );
-
-      if (kDebugMode) {
-        print(bodyRequest.toJson());
-      }
-
-      var response = await _ioClient.post(uri,
-          headers: headerJson, body: bodyRequest.toJson());
+      var response = await _ioClient
+          .post(uri, headers: Auth.header, body: jsonEncode(bodyRequest))
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         var result = jsonDecode(response.body);
@@ -49,7 +36,7 @@ class PaymentPenseBankPix {
           _handleSuccess(context ?? Get.context!, result);
           return;
         }
-        _handleError(context ?? Get.context!, result['message']);
+        _handleErrorFromApi(context ?? Get.context!, result['message']);
         return;
       }
       _handleError(context ?? Get.context!, response.body);
@@ -59,16 +46,29 @@ class PaymentPenseBankPix {
   }
 
   Future<void> _handleSuccess(BuildContext context, dynamic result) async {
-    String hash = result['message']['hash'];
-    String qrCode = result['message']['qrcode'];
-    PenseBankPix().isolateMonitoring(context, hash: hash);
+    String txid = result['data']['txid'];
+    String qrCode = result['data']['qrcode'];
+    PixApi().isolateMonitoring(context,
+        hash: txid,
+        serial: _configController.serialDevice,
+        endpoint: Endpoints.consultarPagamentoPix());
     await Get.dialog(
       barrierDismissible: false,
       PenseBankDialog(
         qrCode: qrCode,
-        hash: hash,
+        hash: txid,
       ),
+
+      //TODO receber o qrcode e o hash
     );
+  }
+
+  _handleErrorFromApi(BuildContext context, String message) {
+    _logger.e('Erro ao gerar o QrCode. $message');
+    CustomCherryError(
+      message: message,
+    ).show(context);
+    Get.back();
   }
 
   void _handleError(BuildContext context, String message) {
@@ -76,5 +76,6 @@ class PaymentPenseBankPix {
     CustomCherryError(
       message: 'Erro ao gerar o QrCode. $message',
     ).show(context);
+    Get.back();
   }
 }

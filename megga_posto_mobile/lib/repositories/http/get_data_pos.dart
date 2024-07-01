@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:http/io_client.dart';
 import 'package:logger/logger.dart';
 import 'package:megga_posto_mobile/common/custom_cherry.dart';
-
 import '../../model/data_pos_model.dart';
 import '../../utils/auth.dart';
 import '../../utils/dependencies.dart';

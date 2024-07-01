@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
+import 'package:megga_posto_mobile/controller/camera_controller.dart';
 import 'package:megga_posto_mobile/model/cart_shopping_model.dart';
 import 'package:megga_posto_mobile/model/collections/product.dart';
 import 'package:megga_posto_mobile/model/product_and_quantity_model.dart';
 import 'package:megga_posto_mobile/model/supply_model.dart';
 
 import 'package:megga_posto_mobile/model/supply_pump_model.dart';
-import 'package:megga_posto_mobile/service/update_supply_pump.dart';
 import 'package:megga_posto_mobile/utils/dependencies.dart';
 import 'package:megga_posto_mobile/utils/methods/bill/bill_get.dart';
 import 'package:megga_posto_mobile/utils/methods/payment/payment_features.dart';
@@ -15,7 +15,7 @@ import '../../../repositories/isar_db/product/get_product.dart';
 
 class BillFeatures {
   final _billController = Dependencies.billController();
-  final _cameraPhotoController = Dependencies.cameraPhotoController();
+
   final _billGet = BillGet();
   final _paymentFeatures = PaymentFeatures();
   final _logger = SingletonsInstances().logger;
@@ -134,8 +134,11 @@ class BillFeatures {
 
       if (isCartShopping) {
         if (_billController.cartShopping.isEmpty) {
-          _cameraPhotoController.clearCamera();
-          Get.back();
+          if (Get.isRegistered<CameraPhotoController>()) {
+            final _cameraPhotoController = Dependencies.cameraPhotoController();
+            _cameraPhotoController.clearCamera();
+            Get.back();
+          }
         }
       }
       _updateVariables();
@@ -153,7 +156,10 @@ class BillFeatures {
       if (_billController.cartShopping.isEmpty) {
         Get.back();
         _paymentFeatures.clearAll();
-        _cameraPhotoController.clearCamera();
+        if (Get.isRegistered<CameraPhotoController>()) {
+          final _cameraPhotoController = Dependencies.cameraPhotoController();
+          _cameraPhotoController.clearCamera();
+        }
       }
     }
     _updateVariables();

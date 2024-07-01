@@ -1,6 +1,7 @@
 package com.example.megga_posto_mobile;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -22,6 +25,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
+import android.Manifest;
 
 import android.util.Log;
 
@@ -47,6 +52,7 @@ public class MainActivity extends FlutterActivity {
     private static final String CHANNEL = "samples.flutter.dev/gedi"; // Canal de comunicação do flutter com o Java
     private com.example.megga_posto_mobile.ConfigPrint configPrint = new com.example.megga_posto_mobile.ConfigPrint();
     private com.example.megga_posto_mobile.SatLib satLib;
+    private static final int REQUEST_CAMERA_PERMISSION = 200;
     Intent intentGer7 = new Intent(Intent.ACTION_VIEW, Uri.parse("pos7api://pos7")); // Instanciando o Intent da Ger7 --
     // É importante que o apk da Ger7
     // esteje instalado na POS
@@ -60,6 +66,20 @@ public class MainActivity extends FlutterActivity {
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         gertecPrinter.setConfigImpressao(configPrint);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permissão concedida, você pode prosseguir com outras tarefas
+            }
+        }
     }
 
     @Override

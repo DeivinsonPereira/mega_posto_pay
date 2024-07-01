@@ -69,6 +69,7 @@ class CancellSell {
     _logger.e('Erro ao cancelar a venda. $message');
     CustomCherryError(message: message).show(Get.context!);
     Get.back();
+    Get.back();
   }
 
   void _handleError(String message) {

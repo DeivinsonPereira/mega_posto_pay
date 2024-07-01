@@ -18,6 +18,7 @@ class LogicFinishPayment {
   final _paymentFeatures = PaymentFeatures();
   final _billFeatures = BillFeatures();
   final _printController = Dependencies.printController();
+  final _cameraController = Dependencies.cameraPhotoController();
   // final _billController = Dependencies.billController();
 
   Future<void> confirmPayment(String modalidade,
@@ -80,6 +81,9 @@ class LogicFinishPayment {
               style: TextStyle(color: Colors.white, fontSize: 14),
             ),
             onPressed: () async {
+              _paymentFeatures.clearAll();
+              _cameraController.dispose();
+
               Navigator.of(Get.context!).pop();
               funRetorno(false);
             }),

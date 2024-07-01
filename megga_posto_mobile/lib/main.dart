@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:megga_posto_mobile/model/collections/dado_empresa.dart';
 import 'package:megga_posto_mobile/model/collections/data_pix.dart';
+import 'package:megga_posto_mobile/service/device_info/get_info_device.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'model/collections/payment_form.dart';
@@ -31,15 +32,12 @@ void main() async {
   final _configFeatures = ConfigFeatures.instance;
   _configFeatures.updateIpServidor();
 
-//  await GetInfoDevice.instance.getSerialNumber(); TODO já está funcionando, só descomentar quando estiver cadastrado na api
+  // TODO já está funcionando, só descomentar quando estiver cadastrado na api
+  // await GetInfoDevice.instance.getSerialNumber();
 
+  // apagar quando for para produção
   _configFeatures
       .setSerialDevice('sdsdsdsdscr34343'); //androidInfo.serialNumber
 
-  // TODO fazer Sangria
-  // TODO fazer suprimento
-  // TODO imprimir sangria, suprimento
-  // TODO criar tela relatorio do caixa com a opção de imprimir
-  
   runApp(const AppWidget());
 }

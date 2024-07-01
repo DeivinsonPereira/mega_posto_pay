@@ -113,7 +113,7 @@ abstract class Dependencies {
     }
   }
 
-  static CameraPhotoController cameraPhotoController () {
+  static CameraPhotoController cameraPhotoController() {
     if (Get.isRegistered<CameraPhotoController>()) {
       return Get.find<CameraPhotoController>();
     } else {

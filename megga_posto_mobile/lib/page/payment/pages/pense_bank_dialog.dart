@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/common/isolate_pix_manager.dart';
-import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pense_bank_pix/pense_bank_pix.dart';
+import 'package:megga_posto_mobile/service/payment_service/pix_payment.dart/pix_api/pix_api.dart';
 import 'package:megga_posto_mobile/utils/format_numbers.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -29,7 +29,7 @@ class PenseBankDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final _paymentFeatures = PaymentFeatures();
     final _paymentController = Dependencies.paymentController();
-    final _penseBankPix = PenseBankPix();
+    final _penseBankPix = PixApi();
     final _isolatePixManager = IsolatePixManager.instance;
     double sizeTextButtom = Get.size.height * 0.03;
     bool isEnabled = false;

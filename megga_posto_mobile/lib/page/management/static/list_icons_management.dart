@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:megga_posto_mobile/common/custom_cherry.dart';
 import 'package:megga_posto_mobile/common/custom_text_style.dart';
 import 'package:megga_posto_mobile/model/management_model.dart';
 import 'package:megga_posto_mobile/page/loading/loading_page.dart';
@@ -215,6 +216,11 @@ class ListIconsManagement {
         if (_managementController.listCancelamento.isNotEmpty) {
           Get.to(
             () => CancelamentoPage(function: () {
+              if (_managementController.idCancelamentoSelected.value == -1) {
+                const CustomCherryError(message: 'Selecione um cancelamento.')
+                    .show(Get.context!);
+                return;
+              }
               Get.dialog(const ConfirmCancelamentoDialog(),
                   barrierDismissible: false);
             }),

@@ -13,6 +13,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     // Constrói os Cards
     Widget _buildCard(int index) {
       return CustomCardHomePage(
